@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<agenteAA nome="AGF1" codigo="null" estado="null">
+	
+    <agentesAA>
+        <AQZ3 estado="null" recurso="AT33" chave="CH34"/>
+    </agentesAA>
+	
+    <agentesAT>
+        <AT21 codigo="1" prioridade="1" estado="null" carregamento="null" carregamentoMaximo="200" chave1="CH21" chave2="CH23" comprimento="10" impedancia="0.5"/>
+    </agentesAT>
+	
+    <agentesAE>
+        <CH21 codigo="1" tipo="normal" estado="fechado" atuacao="null" ordem="null" porta="4005"/>
+        <CH23 codigo="2" tipo="encontro" estado="fechado" atuacao="null" ordem="null" porta="4008"/>
+    </agentesAE>
+	
+    <correnteNecessaria valor="null"/>
+	
+    <correnteDisponivel valor="null" />
+        
+    <correnteMaxima valor="200"/>
+	
+    <melhorPropositor nome="null"/>
+	
+    <prioridade valor="1"/>
+		
+</agenteAA>

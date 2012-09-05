@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<agenteAA nome="AQZ4" codigo="null" estado="null">
+	<agentesAA>
+		<AGF1 estado="null" recurso="AT43" chave="CH43"/>
+	</agentesAA>
+	
+	<agentesAT>
+		<AT41 codigo="1" estado="null" carregamento="null" carregamentoMaximo="200" chave1="CH41" chave2="CH42" comprimento="10" impedancia="0.5"/>
+		<AT42 codigo="2" estado="null" carregamento="null" carregamentoMaximo="200" chave1="CH42" chave2="CH43" comprimento="10" impedancia="0.5"/>
+		<AT43 codigo="3" estado="null" carregamento="null" carregamentoMaximo="200" chave1="CH44" chave2="CH44" comprimento="10" impedancia="0.5"/>
+	</agentesAT>
+	
+	<agentesAE>
+		<CH41 codigo="1" tipo="normal" estado="fechado" atuacao="null" ordem="null" porta="4013"/>
+		<CH42 codigo="2" tipo="normal" estado="fechado" atuacao="null" ordem="null" porta="4014"/>
+		<CH43 codigo="4" tipo="encontro" estado="aberto"  atuacao="null" ordem="null" porta="4015"/>
+		<CH44 codigo="3" tipo="normal" estado="fechado" atuacao="null" ordem="null" porta="4016"/>
+	</agentesAE>
+	
+	<correnteNecessaria valor="null"/>
+	
+	<correnteDisponivel valor="null" />
+        
+        <correnteMaxima valor="300"/>
+	
+	<melhorPropositor nome="null"/>
+	
+	<prioridade valor="1"/>
+	
+</agenteAA>
