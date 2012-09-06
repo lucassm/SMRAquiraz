@@ -98,7 +98,7 @@
         <Component class="javax.swing.JButton" name="botaoLancaAgentes">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="/home/lucas/NetBeansProjects/SMRAquiraz/src/icons/go-last.png"/>
+              <Image iconType="3" name="/icons/lanca_agentes.png"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Lan&#xe7;ar Agentes"/>
             <Property name="focusable" type="boolean" value="false"/>
@@ -112,7 +112,7 @@
         <Component class="javax.swing.JButton" name="botaoSimulaCurto">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="/home/lucas/NetBeansProjects/SMRAquiraz/src/icons/dialog-warning.png"/>
+              <Image iconType="3" name="/icons/simula_curto.png"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Simular Curto-circuito"/>
             <Property name="focusable" type="boolean" value="false"/>
@@ -126,7 +126,7 @@
         <Component class="javax.swing.JButton" name="jButton3">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="/home/lucas/NetBeansProjects/SMRAquiraz/src/icons/dialog-error.png"/>
+              <Image iconType="3" name="/icons/simula_perda_se.png"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Simular Perda de SE"/>
             <Property name="focusable" type="boolean" value="false"/>
@@ -137,7 +137,7 @@
         <Component class="javax.swing.JButton" name="jButton4">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="/home/lucas/NetBeansProjects/SMRAquiraz/src/icons/list-remove.png"/>
+              <Image iconType="3" name="/icons/termina_agentes.png"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Terminar Agentes"/>
             <Property name="focusable" type="boolean" value="false"/>
@@ -148,7 +148,7 @@
         <Component class="javax.swing.JButton" name="jButton5">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="/home/lucas/NetBeansProjects/SMRAquiraz/src/icons/edit-copy.png"/>
+              <Image iconType="3" name="/icons/visualisa_info.png"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Visualizar Inform&#xe7;&#xf5;es"/>
             <Property name="focusable" type="boolean" value="false"/>
@@ -162,7 +162,7 @@
         <Component class="javax.swing.JButton" name="jButton6">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="/home/lucas/NetBeansProjects/SMRAquiraz/src/icons/green-view-refresh.png"/>
+              <Image iconType="3" name="/icons/limpa_diagrama.png"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Limpar Diagrama"/>
             <Property name="focusable" type="boolean" value="false"/>
@@ -176,7 +176,7 @@
         <Component class="javax.swing.JButton" name="jButton7">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="/home/lucas/NetBeansProjects/SMRAquiraz/src/icons/gray-view-refresh.png"/>
+              <Image iconType="3" name="/icons/reinicia_agentes.png"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Reiniciar Agentes"/>
             <Property name="focusable" type="boolean" value="false"/>
@@ -187,7 +187,7 @@
         <Component class="javax.swing.JButton" name="botaoTensao">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/icons/chronometer.png"/>
+              <Image iconType="3" name="/icons/simula_dinamica.png"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Sumula&#xe7;&#xe3;o Din&#xe2;mica"/>
             <Property name="focusable" type="boolean" value="false"/>
@@ -196,6 +196,20 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="botaoTensaoActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="jButton1">
+          <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/icons/visualisa_log.png"/>
+            </Property>
+            <Property name="toolTipText" type="java.lang.String" value="Visualisa arquivos de log"/>
+            <Property name="focusable" type="boolean" value="false"/>
+            <Property name="horizontalTextPosition" type="int" value="0"/>
+            <Property name="verticalTextPosition" type="int" value="3"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>

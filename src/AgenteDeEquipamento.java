@@ -14,6 +14,7 @@ import jade.proto.AchieveREResponder;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.PrintStream;
 import java.net.Socket;
 import org.jdom.Document;
 import org.jdom.JDOMException;
@@ -90,6 +91,18 @@ public class AgenteDeEquipamento extends Agent {
 
         String conteudo = null;
         boolean objeto = true;
+        Socket socket = null;
+        PrintStream ps =  null;
+        
+        try {
+            
+            socket = new Socket("localhost", 7000);
+            ps = new PrintStream(socket.getOutputStream());
+            ps.println("mensagem enviada de "+msg.getSender().getLocalName()+" para "+this.getLocalName());
+            ps.println("quit");
+        } catch (Exception e) {
+            
+        }
 
         try {
             Element elemento = (Element) msg.getContentObject();

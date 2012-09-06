@@ -23,13 +23,17 @@ import view.DialogVisualisarLogs;
  *
  * @author lucas
  */
-public class CapturaLog {
+public class CapturaLog extends Thread{
 
     DialogVisualisarLogs janela;
     
     public CapturaLog() {
         janela = new DialogVisualisarLogs();
         janela.setVisible(true);
+    }
+    
+    public void run(){
+        
     }
 
     public void inicializaLogs() throws IOException {
@@ -81,12 +85,4 @@ public class CapturaLog {
 
     }//fim do método inicializaLogs
     
-    public static void main(String[] args){
-        CapturaLog capturaLog = new CapturaLog();
-        try {
-            capturaLog.inicializaLogs();
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        }
-    }
 }//fim da classe CapturaLog

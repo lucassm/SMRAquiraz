@@ -5,7 +5,9 @@
  */
 package view;
 
+import java.io.IOException;
 import javax.swing.UnsupportedLookAndFeelException;
+import model.CapturaLog;
 import model.LancaAgentes;
 import model.LancaWidgets;
 import model.LimpaGrafico;
@@ -58,6 +60,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         jButton6 = new javax.swing.JButton();
         jButton7 = new javax.swing.JButton();
         botaoTensao = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         painel1 = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
@@ -73,7 +76,7 @@ public class FramePrincipal extends javax.swing.JFrame {
 
         jToolBar1.setRollover(true);
 
-        botaoLancaAgentes.setIcon(new javax.swing.ImageIcon("/home/lucas/NetBeansProjects/SMRAquiraz/src/icons/go-last.png")); // NOI18N
+        botaoLancaAgentes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/lanca_agentes.png"))); // NOI18N
         botaoLancaAgentes.setToolTipText("Lançar Agentes");
         botaoLancaAgentes.setFocusable(false);
         botaoLancaAgentes.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -85,7 +88,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         });
         jToolBar1.add(botaoLancaAgentes);
 
-        botaoSimulaCurto.setIcon(new javax.swing.ImageIcon("/home/lucas/NetBeansProjects/SMRAquiraz/src/icons/dialog-warning.png")); // NOI18N
+        botaoSimulaCurto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/simula_curto.png"))); // NOI18N
         botaoSimulaCurto.setToolTipText("Simular Curto-circuito");
         botaoSimulaCurto.setFocusable(false);
         botaoSimulaCurto.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -97,21 +100,21 @@ public class FramePrincipal extends javax.swing.JFrame {
         });
         jToolBar1.add(botaoSimulaCurto);
 
-        jButton3.setIcon(new javax.swing.ImageIcon("/home/lucas/NetBeansProjects/SMRAquiraz/src/icons/dialog-error.png")); // NOI18N
+        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/simula_perda_se.png"))); // NOI18N
         jButton3.setToolTipText("Simular Perda de SE");
         jButton3.setFocusable(false);
         jButton3.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton3.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(jButton3);
 
-        jButton4.setIcon(new javax.swing.ImageIcon("/home/lucas/NetBeansProjects/SMRAquiraz/src/icons/list-remove.png")); // NOI18N
+        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/termina_agentes.png"))); // NOI18N
         jButton4.setToolTipText("Terminar Agentes");
         jButton4.setFocusable(false);
         jButton4.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton4.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(jButton4);
 
-        jButton5.setIcon(new javax.swing.ImageIcon("/home/lucas/NetBeansProjects/SMRAquiraz/src/icons/edit-copy.png")); // NOI18N
+        jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/visualisa_info.png"))); // NOI18N
         jButton5.setToolTipText("Visualizar Informções");
         jButton5.setFocusable(false);
         jButton5.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -123,7 +126,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         });
         jToolBar1.add(jButton5);
 
-        jButton6.setIcon(new javax.swing.ImageIcon("/home/lucas/NetBeansProjects/SMRAquiraz/src/icons/green-view-refresh.png")); // NOI18N
+        jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/limpa_diagrama.png"))); // NOI18N
         jButton6.setToolTipText("Limpar Diagrama");
         jButton6.setFocusable(false);
         jButton6.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -135,14 +138,14 @@ public class FramePrincipal extends javax.swing.JFrame {
         });
         jToolBar1.add(jButton6);
 
-        jButton7.setIcon(new javax.swing.ImageIcon("/home/lucas/NetBeansProjects/SMRAquiraz/src/icons/gray-view-refresh.png")); // NOI18N
+        jButton7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/reinicia_agentes.png"))); // NOI18N
         jButton7.setToolTipText("Reiniciar Agentes");
         jButton7.setFocusable(false);
         jButton7.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton7.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(jButton7);
 
-        botaoTensao.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/chronometer.png"))); // NOI18N
+        botaoTensao.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/simula_dinamica.png"))); // NOI18N
         botaoTensao.setToolTipText("Sumulação Dinâmica");
         botaoTensao.setFocusable(false);
         botaoTensao.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -153,6 +156,18 @@ public class FramePrincipal extends javax.swing.JFrame {
             }
         });
         jToolBar1.add(botaoTensao);
+
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/visualisa_log.png"))); // NOI18N
+        jButton1.setToolTipText("Visualisa arquivos de log");
+        jButton1.setFocusable(false);
+        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(jButton1);
 
         painel1.setBackground(new java.awt.Color(254, 254, 254));
         painel1.setToolTipText("");
@@ -251,6 +266,16 @@ public class FramePrincipal extends javax.swing.JFrame {
         dialogNivelDeTensao.setVisible(true);
     }//GEN-LAST:event_botaoTensaoActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        
+        CapturaLog capturaLog = new CapturaLog();
+        try {
+            capturaLog.inicializaLogs();
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -280,6 +305,7 @@ public class FramePrincipal extends javax.swing.JFrame {
     private javax.swing.JButton botaoLancaAgentes;
     private javax.swing.JButton botaoSimulaCurto;
     private javax.swing.JButton botaoTensao;
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
