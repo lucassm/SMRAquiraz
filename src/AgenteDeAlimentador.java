@@ -739,7 +739,12 @@ public class AgenteDeAlimentador extends Agent {
 //            }//fim do método onTick
 //        };
 
-        //Lançamentos de Comportamentos Primarios
+        
+        /***********************************************************************
+         * 
+         * Lançamentos de Comportamentos Primarios
+         * 
+         **********************************************************************/
         addBehaviour(comportamentoDeInicializacao);
         addBehaviour(protocoloAchieveREResponder);
         addBehaviour(protocoloContractNetResponder);

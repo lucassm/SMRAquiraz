@@ -1,3 +1,8 @@
+/*****************************************************
+ **
+ **			AGENTE DE EQUIPAMENTO
+ ** 
+ *****************************************************/
 
 import java.io.IOException;
 import java.net.SocketException;
