@@ -30,7 +30,7 @@
                   <Group type="102" attributes="0">
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="jScrollPane1" pref="325" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" pref="673" max="32767" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="jButton2" linkSize="1" min="-2" max="-2" attributes="0"/>

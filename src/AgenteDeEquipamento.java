@@ -16,6 +16,9 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.PrintStream;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.GregorianCalendar;
+import java.util.Locale;
 import org.jdom.Document;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
@@ -93,12 +96,15 @@ public class AgenteDeEquipamento extends Agent {
         boolean objeto = true;
         Socket socket = null;
         PrintStream ps =  null;
+        Locale locale = new Locale("pt","BR");
+        GregorianCalendar calendar = new GregorianCalendar();
+        SimpleDateFormat formatador = new SimpleDateFormat("dd' de 'MMMMM' de 'yyyy' - 'HH':'mm':'ss':'SS",locale);
         
         try {
             
             socket = new Socket("localhost", 7000);
             ps = new PrintStream(socket.getOutputStream());
-            ps.println("mensagem enviada de "+msg.getSender().getLocalName()+" para "+this.getLocalName());
+            ps.println("mensagem enviada de "+msg.getSender().getLocalName()+" para "+this.getLocalName()+" em "+formatador.format(calendar.getTime()));
             ps.println("quit");
         } catch (Exception e) {
             

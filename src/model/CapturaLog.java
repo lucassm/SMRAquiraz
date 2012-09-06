@@ -14,7 +14,9 @@ import java.net.ServerSocket;
 
 import java.net.Socket;
 import javax.swing.DefaultListModel;
+import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.ListCellRenderer;
 import javax.swing.ListModel;
 import org.openide.util.Exceptions;
 import view.DialogVisualisarLogs;
@@ -33,11 +35,7 @@ public class CapturaLog extends Thread{
     }
     
     public void run(){
-        
-    }
-
-    public void inicializaLogs() throws IOException {
-
+                
         //Declara o ServerSocket
         ServerSocket serv = null;
 
@@ -46,9 +44,12 @@ public class CapturaLog extends Thread{
 
         //Declara o leitor para a entrada de dados
         BufferedReader entrada = null;
-
-        //Cria o ServerSocket na porta 7000 se estiver disponível
-        serv = new ServerSocket(7000);
+        try {
+            //Cria o ServerSocket na porta 7000 se estiver disponível
+            serv = new ServerSocket(7000);
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
 
         while (true) {
             
@@ -65,11 +66,11 @@ public class CapturaLog extends Thread{
                     if (msg.equalsIgnoreCase("quit")) {
                         s.close();
                     }else{
+                                                
                         DefaultListModel model = new DefaultListModel();
                         JList lista = janela.getjList1();
                         model = (DefaultListModel) lista.getModel();
                         model.addElement(msg);
-                        System.out.println(msg);
                     }
                     
                 }//fim do while()
@@ -82,7 +83,8 @@ public class CapturaLog extends Thread{
 
             }
         }//fim do while()
+    }
 
-    }//fim do método inicializaLogs
+
     
 }//fim da classe CapturaLog

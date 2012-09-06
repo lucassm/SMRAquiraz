@@ -269,11 +269,8 @@ public class FramePrincipal extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         
         CapturaLog capturaLog = new CapturaLog();
-        try {
-            capturaLog.inicializaLogs();
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        }
+        
+        capturaLog.start();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
