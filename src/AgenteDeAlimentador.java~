@@ -6,13 +6,27 @@
 // modifica-lo dentro dos termos da Licença Pública Geral GNU como
 // publicada pela Fundação do Software Livre (FSF); na versão 3 da
 // Licença, ou (na sua opnião) qualquer versão.
+
+
+
+
 //
 // Este programa é distribuido na esperança que possa ser  util,
 // mas SEM NENHUMA GARANTIA; sem uma garantia implicita de ADEQUAÇÂO a qualquer
+
+
 // MERCADO ou APLICAÇÃO EM PARTICULAR. Veja a
+
+
 // Licença Pública Geral GNU para maiores detalhes.
+
+
+
+
 // 
 // Você deve ter recebido uma cópia da Licença Pública Geral GNU
+
+
 // junto com este programa, se não, acesse <http://www.gnu.org/licenses/>
  
 
@@ -60,7 +74,6 @@ public class AgenteDeAlimentador extends Agent {
     public MessageTemplate filtro2 = MessageTemplate.and(MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET),
             MessageTemplate.MatchPerformative(ACLMessage.CFP));
     public MessageTemplate filtro3 = MessageTemplate.and(MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_SUBSCRIBE), MessageTemplate.MatchContent("Perda de SE"));
-    public MessageTemplate filtro4 = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.REQUEST), MessageTemplate.MatchContent("atualizar"));
     public AID melhorPropositor = null;
     public OneShotBehaviour comportamentoDeInicializacao = null;
     public ContractNetInitiator protocoloContractNetInitiator = null;
@@ -68,7 +81,6 @@ public class AgenteDeAlimentador extends Agent {
     public SubscriptionInitiator protocoloSubscriptionInitiator = null;
     public SubscriptionResponder protocoloSubscriptionResponder = null;
     public AchieveREResponder protocoloAchieveREResponder = null;
-    public AchieveREResponder protocoloAchieveREResponder2 = null;
     public TickerBehaviour comportamentoTemporal100ms = null;
     public TickerBehaviour comportamentoTemporal1minuto = null;
     public double corrente = 0;
@@ -720,21 +732,6 @@ public class AgenteDeAlimentador extends Agent {
         };//fim do comportamento FIPA-SubscriptionResponder
 
         
-        protocoloAchieveREResponder2 = new AchieveREResponder(this, filtro4){
-            
-            protected ACLMessage handleRequest(ACLMessage request){
-                
-                exibirMensagem(request);
-                ACLMessage inform = request.createReply();
-                inform.setPerformative(ACLMessage.INFORM);
-                inform.setContent("mensagem recebida com sucesso");
-                
-                carregarBD(myAgent.getLocalName());
-                
-                return inform;
-            }
-        };
-        
 //        /***********************************************************************
 //         * 
 //         * Comportamento TickerBehaviour
@@ -774,7 +771,6 @@ public class AgenteDeAlimentador extends Agent {
 //            }//fim do método onTick
 //        };
 
-
         
         /***********************************************************************
          * 
@@ -785,7 +781,6 @@ public class AgenteDeAlimentador extends Agent {
         addBehaviour(protocoloAchieveREResponder);
         addBehaviour(protocoloContractNetResponder);
         addBehaviour(protocoloSubscriptionResponder);
-        addBehaviour(protocoloAchieveREResponder2);
 //        addBehaviour(comportamentoTemporal1minuto);
 
 

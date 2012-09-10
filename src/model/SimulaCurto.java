@@ -93,8 +93,6 @@ public class SimulaCurto {
                 msg1 += agenteDeTrecho;
                 msg1 += ")) :content \"curto,"+msg2+"\"\n)";
 
-                System.out.println(msg1);
-
                 Socket cliente = null;
 
                 try {

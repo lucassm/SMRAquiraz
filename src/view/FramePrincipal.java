@@ -7,6 +7,7 @@ package view;
 
 import java.io.IOException;
 import javax.swing.UnsupportedLookAndFeelException;
+import model.AtualizaAgentes;
 import model.CapturaLog;
 import model.LancaAgentes;
 import model.LancaWidgets;
@@ -26,6 +27,7 @@ public class FramePrincipal extends javax.swing.JFrame {
     DialogConfig dialogConfig;
     SimulaCurto simulaCurto;
     LimpaGrafico limpaGrafico;
+    AtualizaAgentes atualizaAgentes;
     
     public FramePrincipal() {
         
@@ -61,6 +63,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         jButton7 = new javax.swing.JButton();
         botaoTensao = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         painel1 = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
@@ -169,6 +172,18 @@ public class FramePrincipal extends javax.swing.JFrame {
         });
         jToolBar1.add(jButton1);
 
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/atualiza_agentes.png"))); // NOI18N
+        jButton2.setToolTipText("Atualiza o banco de dados dos agentes");
+        jButton2.setFocusable(false);
+        jButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(jButton2);
+
         painel1.setBackground(new java.awt.Color(254, 254, 254));
         painel1.setToolTipText("");
 
@@ -273,6 +288,12 @@ public class FramePrincipal extends javax.swing.JFrame {
         capturaLog.start();
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        
+        atualizaAgentes = new AtualizaAgentes();
+        
+    }//GEN-LAST:event_jButton2ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -303,6 +324,7 @@ public class FramePrincipal extends javax.swing.JFrame {
     private javax.swing.JButton botaoSimulaCurto;
     private javax.swing.JButton botaoTensao;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
