@@ -9,10 +9,10 @@
 	</agentesAS>
 	
 	<agentesAA>
-		<AQZ1/>
-		<AQZ2/>
-		<AQZ3/>
-		<AQZ4/>
+		<AQZ1 codigo="1"/>
+		<AQZ2 codigo="2"/>
+		<AQZ3 codigo="3"/>
+		<AQZ4 codigo="4"/>
 	</agentesAA>
 	
 	<agentesAT>

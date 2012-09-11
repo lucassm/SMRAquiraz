@@ -154,7 +154,7 @@ public class AgenteDeTrecho extends Agent {
                         Element agenteTrecho = (Element) agentesTrecho.get(i);
 
                         //Entra no if() caso o trecho ja tenha sido recomposto
-                        if (agenteTrecho.getAttributeValue("estado").equalsIgnoreCase("rescomposto")) {
+                        if (agenteTrecho.getAttributeValue("estado").equalsIgnoreCase("recomposto")) {
 
                             existeTrechoRecomposto = true;
 

@@ -9,6 +9,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import javax.swing.JOptionPane;
+import org.openide.util.Exceptions;
 
 /**
  *
@@ -41,6 +42,12 @@ public class AtualizaAgentes {
 
             }//fim do try-catch
         }//fim do for()
+        
+        try {
+            cliente.close();
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
 
         janela = new JOptionPane();
         janela.showMessageDialog(janela, "Mensagem enviada e agentes atualizados.", null, JOptionPane.INFORMATION_MESSAGE);

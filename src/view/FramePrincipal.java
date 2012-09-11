@@ -13,6 +13,7 @@ import model.LancaAgentes;
 import model.LancaWidgets;
 import model.LimpaGrafico;
 import model.SimulaCurto;
+import model.SimulaPerdaSE;
 import org.openide.util.Exceptions;
 
 /**
@@ -28,28 +29,30 @@ public class FramePrincipal extends javax.swing.JFrame {
     SimulaCurto simulaCurto;
     LimpaGrafico limpaGrafico;
     AtualizaAgentes atualizaAgentes;
+    DialogSimulaPerdaSE dialogSimulaPerdaSE;
     
     public FramePrincipal() {
-        
+
         initComponents();
-        
+
         lancaWidgets = new LancaWidgets(painel1);
-        
+
         lancaWidgets.visualizarWidgets();
-        
+
         lancaAgentes = new LancaAgentes();
-        
-        simulaCurto = new SimulaCurto(lancaWidgets.getGrafico(),lancaAgentes);
-        
+
+        simulaCurto = new SimulaCurto(lancaWidgets.getGrafico(), lancaAgentes);
+
         limpaGrafico = new LimpaGrafico(simulaCurto, lancaWidgets.getChavesVector());
-        
-        dialogSimulaCurto = new DialogSimulaCurto(lancaWidgets.getGrafico(),simulaCurto);
-        
+
+        dialogSimulaCurto = new DialogSimulaCurto(lancaWidgets.getGrafico(), simulaCurto);
+
         dialogConfig = new DialogConfig();
         
+        dialogSimulaPerdaSE = new DialogSimulaPerdaSE();
+
     }
 
-    
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -108,6 +111,11 @@ public class FramePrincipal extends javax.swing.JFrame {
         jButton3.setFocusable(false);
         jButton3.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton3.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
         jToolBar1.add(jButton3);
 
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/termina_agentes.png"))); // NOI18N
@@ -247,26 +255,26 @@ public class FramePrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void botaoLancaAgentesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoLancaAgentesActionPerformed
-        
+
         lancaAgentes.lancaContainers();
         botaoLancaAgentes.setEnabled(false);
     }//GEN-LAST:event_botaoLancaAgentesActionPerformed
 
     private void botaoSimulaCurtoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoSimulaCurtoActionPerformed
-        
+
         if (dialogSimulaCurto.isVisible()) {
             //nada a fazer
-        }else{
+        } else {
             dialogSimulaCurto.setVisible(true);
         }
-        
+
     }//GEN-LAST:event_botaoSimulaCurtoActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
 
-       if (dialogConfig.isVisible()) {
+        if (dialogConfig.isVisible()) {
             //nada a fazer
-        }else{
+        } else {
             dialogConfig.setVisible(true);
         }
     }//GEN-LAST:event_jButton5ActionPerformed
@@ -276,29 +284,38 @@ public class FramePrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void botaoTensaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoTensaoActionPerformed
-        
+
         DialogNivelDeTensao dialogNivelDeTensao = new DialogNivelDeTensao(lancaWidgets.chavesVector, lancaWidgets.getGrafico());
         dialogNivelDeTensao.setVisible(true);
     }//GEN-LAST:event_botaoTensaoActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        
+
         CapturaLog capturaLog = new CapturaLog();
-        
+
         capturaLog.start();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        
+
         atualizaAgentes = new AtualizaAgentes();
-        
+
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+
+        if (dialogSimulaPerdaSE.isVisible()) {
+            //nada a fazer
+        } else {
+            dialogSimulaPerdaSE.setVisible(true);
+        }
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        
+
         try {
             javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
         } catch (ClassNotFoundException ex) {

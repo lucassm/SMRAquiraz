@@ -59,7 +59,7 @@ public class AgenteDeAlimentador extends Agent {
     public MessageTemplate filtro1 = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.REQUEST), MessageTemplate.MatchEncoding("curto"));
     public MessageTemplate filtro2 = MessageTemplate.and(MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET),
             MessageTemplate.MatchPerformative(ACLMessage.CFP));
-    public MessageTemplate filtro3 = MessageTemplate.and(MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_SUBSCRIBE), MessageTemplate.MatchContent("Perda de SE"));
+    public MessageTemplate filtro3 = MessageTemplate.and(MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_SUBSCRIBE), MessageTemplate.MatchPerformative(ACLMessage.SUBSCRIBE));
     public MessageTemplate filtro4 = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.REQUEST), MessageTemplate.MatchContent("atualizar"));
     public AID melhorPropositor = null;
     public OneShotBehaviour comportamentoDeInicializacao = null;
@@ -662,6 +662,8 @@ public class AgenteDeAlimentador extends Agent {
                 ACLMessage msg4 = new ACLMessage(ACLMessage.CFP);
                 msg4.setProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
 
+                atualizarBancoDeDados(subscribe);
+                
                 List agentesAT = agenteAlimentadorBD.getChild("agentesAT").getChildren();
                 double cargaPerdida = 0.0;
                 String cargaPerdida1 = null;
@@ -677,7 +679,7 @@ public class AgenteDeAlimentador extends Agent {
                 agenteAlimentadorBD.getChild("correnteNecessaria").setAttribute("valor", cargaPerdida1);
 
 
-                msg4.setContent(cargaPerdida1);
+                msg4.setContent(subscribe.getContent()+","+cargaPerdida1);
 
                 //Adiciona agentes de alimentadores na lista de mensagens do protocolo ContractNetInitiator
 
@@ -704,7 +706,7 @@ public class AgenteDeAlimentador extends Agent {
                         if (agenteAlimentadorBD.getAttributeValue("estado").equalsIgnoreCase("recomposto")) {
                             ACLMessage msg = subscribe.createReply();
                             msg.setPerformative(ACLMessage.INFORM);
-                            msg.setContent("Trecho Recomposto com sucesso");
+                            msg.setContent("Alimentador Recomposto com sucesso");
                             send(msg);
                             this.stop();
                         }
@@ -720,6 +722,11 @@ public class AgenteDeAlimentador extends Agent {
         };//fim do comportamento FIPA-SubscriptionResponder
 
         
+        /***********************************************************************
+         * 
+         * Comportamento FIPA-AchieveREResponder
+         * 
+         **********************************************************************/
         protocoloAchieveREResponder2 = new AchieveREResponder(this, filtro4){
             
             protected ACLMessage handleRequest(ACLMessage request){

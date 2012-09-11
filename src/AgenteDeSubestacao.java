@@ -44,12 +44,12 @@ import jade.proto.SubscriptionInitiator;
 
 public class AgenteDeSubestacao extends Agent {
 
-    MessageTemplate filtro1 = MessageTemplate.and(
-            MessageTemplate.MatchPerformative(ACLMessage.INFORM),
-            MessageTemplate.MatchContent("problema"));
+    MessageTemplate filtro1 = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.REQUEST),MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST));
     MessageTemplate filtro2 = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.CFP), MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET));
+    ACLMessage msgInfoProblem = null;
     Element agenteSubestacaoBD = null;
     int codigo = 1;
+    String content = null;
 
     public void setup() {
 
@@ -60,72 +60,73 @@ public class AgenteDeSubestacao extends Agent {
             @Override
             protected void onTick() {
 
-                ACLMessage msg = receive(filtro1);
-                if (msg != null) {
+                msgInfoProblem = receive(filtro1);
+                if (msgInfoProblem != null) {
+                    
+                    content = msgInfoProblem.getContent();
                     List agentesChave = agenteSubestacaoBD.getChild("agentesAE").getChildren();
-                    ACLMessage msg1 = new ACLMessage(ACLMessage.REQUEST);
-                    msg1.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
-                    msg1.setContent("Abrir");
-                    
-                    for (int i = 0; i < agentesChave.size(); i++) {
+                    ACLMessage msgAbrirAEs = new ACLMessage(ACLMessage.REQUEST);
+                    msgAbrirAEs.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
+                    msgAbrirAEs.setContent("Abrir");
+
+                                        for (int i = 0; i < agentesChave.size(); i++) {
                         Element agenteChave = (Element) agentesChave.get(i);
-                        msg1.addReceiver(new AID(agenteChave.getName(), AID.ISLOCALNAME));
+                        msgAbrirAEs.addReceiver(new AID(agenteChave.getName(), AID.ISLOCALNAME));
                     }
-                    
+
                     /**
                      * Comportamento FIPA-Request
                      */
-                    addBehaviour(new AchieveREInitiator(myAgent, msg1){
-                        
-                        protected void handleInform(ACLMessage inform){
+                    addBehaviour(new AchieveREInitiator(myAgent, msgAbrirAEs) {
+
+                        protected void handleInform(ACLMessage inform) {
                             exibirMensagem(inform);
                         }
                     });//fim do comportamento AchieveREInitiator
-                    
-                    ACLMessage msg2 = new ACLMessage(ACLMessage.SUBSCRIBE);
-                    msg2.setProtocol(FIPANames.InteractionProtocol.FIPA_SUBSCRIBE);
-                    msg2.addReceiver(new AID(agenteSubestacaoBD.getChild("agentesAA").getChild("AQZ1").getName(), AID.ISLOCALNAME));
-                    msg2.setContent("Perda de SE");
-                    
+
+                    ACLMessage msgSubscribeAA = new ACLMessage(ACLMessage.SUBSCRIBE);
+                    msgSubscribeAA.setProtocol(FIPANames.InteractionProtocol.FIPA_SUBSCRIBE);
+                    msgSubscribeAA.addReceiver(new AID(agenteSubestacaoBD.getChild("agentesAA").getChild("AQZ1").getName(), AID.ISLOCALNAME));
+                    msgSubscribeAA.setContent(msgInfoProblem.getContent());
+
                     /**
                      * Comportamento FIPA-Subscribe
                      */
-                    addBehaviour(new SubscriptionInitiator(myAgent, msg2){
-                        
-                        protected void handleAgree(ACLMessage agree){
-                            
+                    addBehaviour(new SubscriptionInitiator(myAgent, msgSubscribeAA) {
+
+                        protected void handleAgree(ACLMessage agree) {
+
                             exibirMensagem(agree);
                         }
-                        
-                        protected void handleInform(ACLMessage inform){
-                            
+
+                        protected void handleInform(ACLMessage inform) {
+
                             exibirMensagem(inform);
-                            
+
                             codigo++;
-                            
+
                             List agentesAA = agenteSubestacaoBD.getChild("agentesAA").getChildren();
-                            
+
                             for (int i = 0; i < agentesAA.size(); i++) {
-                                
+
                                 Element agenteAA = (Element) agentesAA.get(i);
                                 int codigoAgente = Integer.parseInt(agenteAA.getAttributeValue("codigo"));
-                                
+
                                 if (codigoAgente == codigo) {
-                                    
+
                                     ACLMessage msg = new ACLMessage(ACLMessage.SUBSCRIBE);
                                     msg.setProtocol(FIPANames.InteractionProtocol.FIPA_SUBSCRIBE);
-                                    msg.addReceiver(new AID(agenteAA.getName(),AID.ISLOCALNAME));
-                                    msg.setContent("Perda de SE");
+                                    msg.addReceiver(new AID(agenteAA.getName(), AID.ISLOCALNAME));
+                                    msg.setContent(content);
                                     this.reset(msg);
                                     break;
                                 }//fim do if
-                                
+
                             }//fim do for
-                            
+
                         }//fim do método handleInform
-                        
                     });//fim do comportamento FIPA-SubscribeInitiator
-                    
+
                 }//fim do if
             }
         });//fim do comportamento TickerBehaviour
