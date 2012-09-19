@@ -30,7 +30,7 @@ public class AtualizaAgentes {
             mensagem += agentes[i];
             mensagem += ")) :content \"atualizar\"\n:protocol fipa-request\n)";
 
-            Socket cliente = null;
+            cliente = null;
 
             try {
                 cliente = new Socket("localhost", 6789);

@@ -21,7 +21,11 @@ public class Subestacao {
 
     public Subestacao(String name, Graficos grafico, String way, Point position) {
         
-        widget = grafico.createImageWidget(way, name, position);
+        if (name != null) {
+            widget = grafico.createImageWidget(way, "<html><b>SE "+name+"</b></html>", position);
+        }else{
+            widget = grafico.createImageWidget(way, null, position);
+        }
         
         this.name = name;
     }

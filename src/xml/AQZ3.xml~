@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<agenteAA nome="AQZ3" codigo="null" estado="null">
+	<agentesAA>
+		<AQZ2 estado="null" recurso="AT8" chave="_RP2"/>
+		<AGF1 estado="null" recurso="AT9" chave="_RL3"/>
+	</agentesAA>
+	
+	<agentesAT>
+		<AT31 codigo="1" prioridade="1" estado="null" carregamento="null" carregamentoMaximo="200" chave1="CH31" chave2="CH32" comprimento="10" impedancia="0.5"/>
+		<AT32 codigo="2" prioridade="2" estado="null" carregamento="null" carregamentoMaximo="200" chave1="CH32" chave2="CH33" comprimento="10" impedancia="0.5"/>
+		<AT33 codigo="3" prioridade="3" estado="null" carregamento="null" carregamentoMaximo="200" chave1="CH33" chave2="CH34" comprimento="10" impedancia="0.5"/>
+	</agentesAT>
+	
+	<agentesAE>
+		<CH31 codigo="1" tipo="normal" estado="fechado" atuacao="null" ordem="null" porta="4008"/>
+		<CH32 codigo="2" tipo="normal" estado="fechado" atuacao="null" ordem="null" porta="4009"/>
+                <CH22 codigo="3" tipo="encontro" estado="aberto" atuacao="null" ordem="null" porta="4010"/>
+		<CH33 codigo="4" tipo="normal" estado="fechado" atuacao="null" ordem="null" porta="4011"/>
+		<CH34 codigo="5" tipo="encontro" estado="fechado" atuacao="null" ordem="null" porta="4012"/>
+	</agentesAE>
+	
+	<correnteNecessaria valor="null"/>
+	
+	<correnteDisponivel valor="null" />
+        
+        <correnteMaxima valor="300"/>
+	
+	<melhorPropositor nome="null"/>
+	
+	<prioridade valor="1"/>
+	
+</agenteAA>

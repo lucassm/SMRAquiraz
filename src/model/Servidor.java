@@ -8,8 +8,10 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
 import java.util.Vector;
+import org.netbeans.api.visual.widget.ImageWidget;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Exceptions;
+import org.openide.util.Utilities;
 
 class ThreadServidor implements Runnable{
 
@@ -166,17 +168,19 @@ public class Servidor{
                 
                 for (int i = 0; i < chaveVector1.size(); i++) {
                     
-                    Widget widget = (Widget) chaveVector1.get(i);
+                    ImageWidget widget =  (ImageWidget) chaveVector1.get(i);
                     
                     String[] parametros = s.split(" ");
-                    
-                    if (widget.getToolTipText().contains(parametros[0])) {
+                    String chave = parametros[0].replaceAll("_", "");
+                    if (widget.getToolTipText().contains(chave)) {
                         if (parametros[1].contains("Abrir")) {
-                            widget.setBorder(javax.swing.BorderFactory.createLineBorder(Color.green, 5));
+                            widget.setImage(Utilities.loadImage("imagens/religadorNA.png"));
                             break;
+                            
                         }else if(parametros[1].contains("Fechar")){
-                            widget.setBorder(javax.swing.BorderFactory.createLineBorder(Color.red, 5));
+                            widget.setImage(Utilities.loadImage("imagens/religadorNF.png"));
                             break;
+                            
                         }
                         
                     }

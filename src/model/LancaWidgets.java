@@ -17,10 +17,15 @@ public class LancaWidgets {
 
     public JPanel painel;
     public Graficos grafico = null;
+    public Subestacao FTZ = null;
+    public Subestacao DMG = null;
     public Subestacao AQZ = null;
     public Subestacao JAB = null;
     public Subestacao MSJ = null;
     public Subestacao AGF = null;
+    public Subestacao AE1 = null;
+    public Subestacao AE2 = null;
+    
     public Barra barraAQZ = null;
     public Barra barraJAB = null;
     public Barra barraMSJ = null;
@@ -35,14 +40,20 @@ public class LancaWidgets {
     public Trecho T8 = null;
     public Trecho T9 = null;
     public Trecho T10 = null;
+    public Trecho T11 = null;
+    public Trecho T12 = null;
+    public Trecho T13 = null;
+    
     public Chave CH11 = null;
     public Chave CH12 = null;
     public Chave CH13 = null;
     public Chave CH14 = null;
+    public Chave CH15 = null;
     public Chave CH21 = null;
     public Chave CH22 = null;
     public Chave CH23 = null;
     public Chave CH24 = null;
+    public Chave CH25 = null;
     public Chave CH31 = null;
     public Chave CH32 = null;
     public Chave CH33 = null;
@@ -52,7 +63,17 @@ public class LancaWidgets {
     public Chave CH42 = null;
     public Chave CH43 = null;
     public Chave CH44 = null;
-    public Chave CH45 = null;
+    
+    public Chave CHAQZ1 = null;
+    public Chave CHAQZ2 = null;
+    public Chave CHJAB1 = null;
+    public Chave CHJAB2 = null;
+    public Chave CHMSJ1 = null;
+    public Chave CHAGF1 = null;
+    public Chave CHAGF2 = null;
+    public Chave CHAE1 = null;
+    public Chave CHAE2 = null;
+    
     public Vector<Widget> chavesVector;
 
     public LancaWidgets(JPanel jPanel) {
@@ -61,53 +82,77 @@ public class LancaWidgets {
 
         grafico = new Graficos();
 
-        AQZ = new Subestacao("AQZ", getGrafico(), "imagens/seAquiraz.png", new Point(25, 270));
-        JAB = new Subestacao("JAB", getGrafico(), "imagens/seJabuti.png", new Point(1045, 70));
-        MSJ = new Subestacao("MSJ", getGrafico(), "imagens/seMessejana.png", new Point(1045, 200));
-        AGF = new Subestacao("AGF", getGrafico(), "imagens/seAguaFria.png", new Point(1045, 330));
-        //SE aero1 = new SE("Eólica", graph, "imagens/aero01.png", new Point(265, 590));
-        //SE aero2 = new SE("Eólica", graph, "imagens/aero02.png", new Point(345, 590));
+        FTZ = new Subestacao(null, getGrafico(), "imagens/seFTZ.png", new Point(28, 18));
+        DMG = new Subestacao(null, getGrafico(), "imagens/seDMG.png", new Point(1136, 351));
+        AQZ = new Subestacao("AQZ", getGrafico(), "imagens/seAQZ.png", new Point(157, 274));
+        JAB = new Subestacao("JAB", getGrafico(), "imagens/seJAB.png", new Point(1055, 125));
+        MSJ = new Subestacao("MSJ", getGrafico(), "imagens/seMSJ.png", new Point(1055, 265));
+        AGF = new Subestacao("AGF", getGrafico(), "imagens/seAGF.png", new Point(1055, 378));
+        AE1 = new Subestacao("AE1", getGrafico(), "imagens/aeroGerador.png", new Point(400, 575));
+        AE2 = new Subestacao("AE2", getGrafico(), "imagens/aeroGerador.png", new Point(466, 575));
+        
+        barraAQZ = new Barra("Barra Aquiraz", getGrafico(), "imagens/barraAQZ.png", new Point(297, 111));
+        barraJAB = new Barra("Barra Jabuti", getGrafico(), "imagens/barraJAB.png", new Point(954, 92));
+        barraMSJ = new Barra("Barra Messejana", getGrafico(), "imagens/barraMSJ.png", new Point(954, 252));
+        barraAGF = new Barra("Barra Agua Fria", getGrafico(), "imagens/barraAGF.png", new Point(954, 378));
+        
+        T1 = new Trecho("Trecho 1", getGrafico(), "imagens/trecho1.png", new Point(385, 179));
+        T2 = new Trecho("Trecho 2", getGrafico(), "imagens/trecho2.png", new Point(682, 179));
+        T3 = new Trecho("Trecho 3", getGrafico(), "imagens/trecho3.png", new Point(814, 179));
+        
+        T4 = new Trecho("Trecho 4", getGrafico(), "imagens/trecho4.png", new Point(385, 254));
+        T5 = new Trecho("Trecho 5", getGrafico(), "imagens/trecho5.png", new Point(682, 285));
+        T6 = new Trecho("Trecho 6", getGrafico(), "imagens/trecho6.png", new Point(814, 285));
+        
+        T7 = new Trecho("Trecho 7", getGrafico(), "imagens/trecho7.png", new Point(385, 393));
+        T8 = new Trecho("Trecho 8", getGrafico(), "imagens/trecho8.png", new Point(500, 360));
+        T9 = new Trecho("Trecho 9", getGrafico(), "imagens/trecho9.png", new Point(682, 393));
+        
+        
+        T10 = new Trecho("Trecho 10", getGrafico(), "imagens/trecho10.png", new Point(813, 393));
+        T11 = new Trecho("Trecho 11", getGrafico(), "imagens/trecho11.png", new Point(682, 502));
+        T12 = new Trecho("Trecho 12", getGrafico(), "imagens/trecho12.png", new Point(385, 502));
+        T13 = new Trecho("Carga", getGrafico(), "imagens/carga.png", new Point(545, 575));
+        
+        
+        CH11 = new Chave("21I7", getGrafico(), "imagens/religadorNF.png", "alimentador",new Point(341, 161));
+        CH12 = new Chave("RP1", getGrafico(), "imagens/religadorNA.png", "alimentador", new Point(531, 211));
+        CH13 = new Chave("RS1", getGrafico(), "imagens/religadorNF.png", "alimentador", new Point(638, 161));
+        CH14 = new Chave("RL1", getGrafico(), "imagens/religadorNA.png", "alimentador", new Point(770, 161));
+        CH15 = new Chave("21F8", getGrafico(), "imagens/religadorNF.png", "alimentador", new Point(912, 161));
+        
+        CH21 = new Chave("21I6", getGrafico(), "imagens/religadorNF.png", "alimentador", new Point(341, 268));
+        CH22 = new Chave("RP2", getGrafico(), "imagens/religadorNA.png", "alimentador", new Point(531, 318));
+        CH23 = new Chave("RS2", getGrafico(), "imagens/religadorNF.png", "alimentador", new Point(638, 268));
+        CH24 = new Chave("RL2", getGrafico(), "imagens/religadorNA.png", "alimentador", new Point(770, 268));
+        CH25 = new Chave("21M3", getGrafico(), "imagens/religadorNF.png", "alimentador", new Point(912, 268));
+        
+        CH31 = new Chave("21I5", getGrafico(), "imagens/religadorNF.png", "alimentador", new Point(341, 376));
+        CH32 = new Chave("RS3", getGrafico(), "imagens/religadorNF.png", "alimentador", new Point(458, 376));
+        CH33 = new Chave("RS4", getGrafico(), "imagens/religadorNF.png", "alimentador", new Point(638, 376));
+        CH34 = new Chave("RL3", getGrafico(), "imagens/religadorNA.png", "alimentador", new Point(770, 376));
+        CH35 = new Chave("21I7", getGrafico(), "imagens/religadorNF.png", "alimentador", new Point(912, 415));
+        
+        CH41 = new Chave("21I4", getGrafico(), "imagens/religadorNF.png", "alimentador", new Point(341, 483));
+        CH42 = new Chave("RC1", getGrafico(), "imagens/religadorNF.png", "alimentador", new Point(532, 532));
+        CH43 = new Chave("RS5", getGrafico(), "imagens/religadorNF.png", "alimentador", new Point(638, 483));
+        CH44 = new Chave("RL4", getGrafico(), "imagens/religadorNA.png", "alimentador", new Point(770, 483));
 
-        barraAQZ = new Barra("Barra Aquiraz", getGrafico(), "imagens/barraAquiraz.png", new Point(145, 90));
-        barraJAB = new Barra("Barra Jabuti", getGrafico(), "imagens/e01.png", new Point(765, 70));
-        barraMSJ = new Barra("Barra Messejana", getGrafico(), "imagens/e01.png", new Point(765, 200));
-        barraAGF = new Barra("Barra Agua Fria", getGrafico(), "imagens/e02.png", new Point(765, 330));
+        CHAQZ1 = new Chave("11T1", getGrafico(), "imagens/religadorNF.png", "subestacao", new Point(256, 285));
+        CHAQZ2 = new Chave("11T2", getGrafico(), "imagens/religadorNF.png", "subestacao", new Point(256, 359));
+        CHJAB1 = new Chave("11T1", getGrafico(), "imagens/religadorNF.png", "subestacao", new Point(1014, 128));
+        CHJAB2 = new Chave("11T2", getGrafico(), "imagens/religadorNF.png", "subestacao", new Point(1014, 186));
+        CHMSJ1 = new Chave("11T1", getGrafico(), "imagens/religadorNF.png", "subestacao", new Point(1014, 269));
+        CHAGF1 = new Chave("11T1", getGrafico(), "imagens/religadorNF.png", "subestacao", new Point(1014, 382));
+        CHAGF2 = new Chave("11T2", getGrafico(), "imagens/religadorNF.png", "subestacao", new Point(1014, 440));
+        CHAE1 = new Chave("RW1", getGrafico(), "imagens/religadorNF.png", "subestacao", new Point(400, 532));
+        CHAE2 = new Chave("RW2", getGrafico(), "imagens/religadorNF.png", "subestacao", new Point(466, 532));
 
-        T1 = new Trecho("Trecho 11", getGrafico(), "imagens/e11.png", new Point(245, 110));
-        T2 = new Trecho("Trecho 12", getGrafico(), "imagens/e12.png", new Point(605, 110));
-        T3 = new Trecho("Trecho 21", getGrafico(), "imagens/e21.png", new Point(245, 200));
-        T4 = new Trecho("Trecho 22", getGrafico(), "imagens/e22.png", new Point(605, 240));
-        T5 = new Trecho("Trecho 31", getGrafico(), "imagens/e31.png", new Point(245, 370));
-        T6 = new Trecho("Trecho 32", getGrafico(), "imagens/e32.png", new Point(385, 330));
-        T7 = new Trecho("Trecho 33", getGrafico(), "imagens/e33.png", new Point(605, 370));
-        T8 = new Trecho("Trecho 41", getGrafico(), "imagens/e41.png", new Point(245, 500));
-        T9 = new Trecho("Trecho 42", getGrafico(), "imagens/e42.png", new Point(535, 500));
-        T10 = new Trecho("Trecho 43", getGrafico(), "imagens/e43.png", new Point(441, 590));
+        grafico.createImageWidget("imagens/legenda.png", null, new Point(59, 452));
 
-        CH11 = new Chave("CH11", getGrafico(), "imagens/d1.png", new Point(196, 90));
-        CH12 = new Chave("CH12", getGrafico(), "imagens/d1.png", new Point(425, 150));
-        CH13 = new Chave("CH13", getGrafico(), "imagens/d1.png", new Point(555, 90));
-        CH14 = new Chave("CH14", getGrafico(), "imagens/d1.png", new Point(715, 90));
-        CH21 = new Chave("CH21", getGrafico(), "imagens/d2.png", new Point(196, 220));
-        CH22 = new Chave("CH22", getGrafico(), "imagens/d2.png", new Point(425, 280));
-        CH23 = new Chave("CH23", getGrafico(), "imagens/d2.png", new Point(555, 220));
-        CH24 = new Chave("CH24", getGrafico(), "imagens/d2.png", new Point(715, 220));
-        CH31 = new Chave("CH31", getGrafico(), "imagens/d3.png", new Point(195, 350));
-        CH32 = new Chave("CH32", getGrafico(), "imagens/d3.png", new Point(335, 350));
-        CH33 = new Chave("CH33", getGrafico(), "imagens/d3.png", new Point(555, 350));
-        CH34 = new Chave("CH34", getGrafico(), "imagens/d3.png", new Point(715, 350));
-        CH35 = new Chave("CH35", getGrafico(), "imagens/d3.png", new Point(265, 540));
-        CH41 = new Chave("CH41", getGrafico(), "imagens/d4.png", new Point(195, 480));
-        CH42 = new Chave("CH42", getGrafico(), "imagens/d4.png", new Point(485, 480));
-        CH43 = new Chave("CH43", getGrafico(), "imagens/d4.png", new Point(715, 480));
-        CH44 = new Chave("CH44", getGrafico(), "imagens/d4.png", new Point(425, 540));
-        CH45 = new Chave("CH45", getGrafico(), "imagens/d4.png", new Point(345, 540));
+        grafico.createImageWidget("imagens/coelce.png", null, new Point(1041, 583));
 
-        grafico.createImageWidget("imagens/redeAquiraz.png", null, new Point(455, 5));
-
-        grafico.createImageWidget("imagens/coelce.png", null, new Point(840, 575));
-
-        grafico.createImageWidget("imagens/ufc.png", null, new Point(1025, 525));
+        grafico.createImageWidget("imagens/ufc.png", null, new Point(1191, 547));
 
         painel.setLayout(new java.awt.BorderLayout());
 
@@ -137,7 +182,7 @@ public class LancaWidgets {
 
         chavesVector.add(CH34.widget);
 
-        //chavesVector.add(CH35.widget);
+        chavesVector.add(CH35.widget);
 
         chavesVector.add(CH41.widget);
 
@@ -148,6 +193,7 @@ public class LancaWidgets {
         chavesVector.add(CH44.widget);
 
         //chavesVector.add(CH45.widget);
+         
         
         Vector<Servidor> servidores = new Vector(16);
         
@@ -724,20 +770,6 @@ public class LancaWidgets {
      */
     public void setCH44(Chave CH44) {
         this.CH44 = CH44;
-    }
-
-    /**
-     * @return the CH45
-     */
-    public Chave getCH45() {
-        return CH45;
-    }
-
-    /**
-     * @param CH45 the CH45 to set
-     */
-    public void setCH45(Chave CH45) {
-        this.CH45 = CH45;
     }
 
     /**

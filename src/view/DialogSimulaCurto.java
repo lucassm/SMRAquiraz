@@ -59,7 +59,7 @@ public class DialogSimulaCurto extends javax.swing.JFrame {
         jLabel1.setText(org.openide.util.NbBundle.getMessage(DialogSimulaCurto.class, "DialogSimulaCurto.jLabel1.text_1")); // NOI18N
 
         jList1.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Trecho 11", "Trecho 12", "Trecho 21", "Trecho 22", "Trecho 31", "Trecho 32", "Trecho 33", "Trecho 41", "Trecho 42", "Trecho 43"};
+            String[] strings = { "Trecho 1", "Trecho 2", "Trecho 4", "Trecho 5", "Trecho 7", "Trecho 8", "Trecho 9", "Trecho 11", "Trecho 12"};
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });

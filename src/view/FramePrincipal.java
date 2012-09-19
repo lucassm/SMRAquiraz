@@ -27,6 +27,7 @@ public class FramePrincipal extends javax.swing.JFrame {
     DialogSimulaCurto dialogSimulaCurto;
     DialogConfig dialogConfig;
     SimulaCurto simulaCurto;
+    SimulaPerdaSE simulaPerdaSE;
     LimpaGrafico limpaGrafico;
     AtualizaAgentes atualizaAgentes;
     DialogSimulaPerdaSE dialogSimulaPerdaSE;
@@ -42,6 +43,8 @@ public class FramePrincipal extends javax.swing.JFrame {
         lancaAgentes = new LancaAgentes();
 
         simulaCurto = new SimulaCurto(lancaWidgets.getGrafico(), lancaAgentes);
+        
+        simulaPerdaSE = new SimulaPerdaSE(lancaAgentes);
 
         limpaGrafico = new LimpaGrafico(simulaCurto, lancaWidgets.getChavesVector());
 
@@ -49,7 +52,7 @@ public class FramePrincipal extends javax.swing.JFrame {
 
         dialogConfig = new DialogConfig();
         
-        dialogSimulaPerdaSE = new DialogSimulaPerdaSE();
+        dialogSimulaPerdaSE = new DialogSimulaPerdaSE(simulaPerdaSE);
 
     }
 
@@ -211,6 +214,11 @@ public class FramePrincipal extends javax.swing.JFrame {
         jMenu1.setText("Arquivo");
 
         jMenuItem1.setText("Lançar Agentes");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItem1);
 
         jMenu3.setText("Simular Curto");
@@ -310,6 +318,10 @@ public class FramePrincipal extends javax.swing.JFrame {
             dialogSimulaPerdaSE.setVisible(true);
         }
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     /**
      * @param args the command line arguments

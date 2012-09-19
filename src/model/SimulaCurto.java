@@ -56,34 +56,31 @@ public class SimulaCurto {
 
                 switch (indices1[i]) {
                     case 0:
-                        agenteDeTrecho = "AT11";
+                        agenteDeTrecho = "AT1";
                         break;
                     case 1:
-                        agenteDeTrecho = "AT12";
+                        agenteDeTrecho = "AT2";
                         break;
                     case 2:
-                        agenteDeTrecho = "AT21";
+                        agenteDeTrecho = "AT4";
                         break;
                     case 3:
-                        agenteDeTrecho = "AT22";
+                        agenteDeTrecho = "AT5";
                         break;
                     case 4:
-                        agenteDeTrecho = "AT31";
+                        agenteDeTrecho = "AT7";
                         break;
                     case 5:
-                        agenteDeTrecho = "AT32";
+                        agenteDeTrecho = "AT8";
                         break;
                     case 6:
-                        agenteDeTrecho = "AT33";
+                        agenteDeTrecho = "AT9";
                         break;
                     case 7:
-                        agenteDeTrecho = "AT41";
+                        agenteDeTrecho = "AT11";
                         break;
                     case 8:
-                        agenteDeTrecho = "AT42";
-                        break;
-                    case 9:
-                        agenteDeTrecho = "AT43";
+                        agenteDeTrecho = "AT12";
                         break;
                 }
 
@@ -114,45 +111,57 @@ public class SimulaCurto {
 
         Widget w = null;
 
-        if (trecho.equalsIgnoreCase("AT11")) {
+        if (trecho.equalsIgnoreCase("AT1")) {
 
-            w = grafico.createImageWidget("imagens/curto.png", null, new Point(300, 50));
+            w = grafico.createImageWidget("imagens/curto.png", null, new Point(431, 127));
+
+        } else if (trecho.equalsIgnoreCase("AT2")) {
+
+            w = grafico.createImageWidget("imagens/curto.png", null, new Point(691, 127));
+
+        } else if (trecho.equalsIgnoreCase("AT3")) {
+
+            w = grafico.createImageWidget("imagens/curto.png", null, new Point(828, 127));
+
+        } else if (trecho.equalsIgnoreCase("AT4")) {
+
+            w = grafico.createImageWidget("imagens/curto.png", null, new Point(431, 236));
+
+        } else if (trecho.equalsIgnoreCase("AT5")) {
+
+            w = grafico.createImageWidget("imagens/curto.png", null, new Point(691, 236));
+
+        } else if (trecho.equalsIgnoreCase("AT6")) {
+
+            w = grafico.createImageWidget("imagens/curto.png", null, new Point(828, 236));
+
+        } else if (trecho.equalsIgnoreCase("AT7")) {
+
+            w = grafico.createImageWidget("imagens/curto.png", null, new Point(394, 342));
+
+        } else if (trecho.equalsIgnoreCase("AT8")) {
+
+            w = grafico.createImageWidget("imagens/curto.png", null, new Point(575, 342));
+
+        } else if (trecho.equalsIgnoreCase("AT9")) {
+
+            w = grafico.createImageWidget("imagens/curto.png", null, new Point(696, 342));
+
+        } else if (trecho.equalsIgnoreCase("AT10")) {
+
+            w = grafico.createImageWidget("imagens/curto.png", null, new Point(834, 342));
+
+        } else if (trecho.equalsIgnoreCase("AT11")) {
+
+            w = grafico.createImageWidget("imagens/curto.png", null, new Point(445, 445));
 
         } else if (trecho.equalsIgnoreCase("AT12")) {
 
-            w = grafico.createImageWidget("imagens/curto.png", null, new Point(625, 50));
+            w = grafico.createImageWidget("imagens/curto.png", null, new Point(695, 445));
 
-        } else if (trecho.equalsIgnoreCase("AT21")) {
+        } else if (trecho.equalsIgnoreCase("AT13")) {
 
-            w = grafico.createImageWidget("imagens/curto.png", null, new Point(300, 175));
-
-        } else if (trecho.equalsIgnoreCase("AT22")) {
-
-            w = grafico.createImageWidget("imagens/curto.png", null, new Point(625, 175));
-
-        } else if (trecho.equalsIgnoreCase("AT31")) {
-
-            w = grafico.createImageWidget("imagens/curto.png", null, new Point(260, 310));
-
-        } else if (trecho.equalsIgnoreCase("AT32")) {
-
-            w = grafico.createImageWidget("imagens/curto.png", null, new Point(480, 310));
-
-        } else if (trecho.equalsIgnoreCase("AT33")) {
-
-            w = grafico.createImageWidget("imagens/curto.png", null, new Point(620, 310));
-
-        } else if (trecho.equalsIgnoreCase("AT41")) {
-
-            w = grafico.createImageWidget("imagens/curto.png", null, new Point(300, 440));
-
-        } else if (trecho.equalsIgnoreCase("AT42")) {
-
-            w = grafico.createImageWidget("imagens/curto.png", null, new Point(625, 440));
-
-        } else if (trecho.equalsIgnoreCase("AT43")) {
-
-            w = grafico.createImageWidget("imagens/curto.png", null, new Point(470, 580));
+            w = grafico.createImageWidget("imagens/curto.png", null, new Point(570, 590));
 
         }
 

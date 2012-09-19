@@ -21,7 +21,8 @@ public class DialogSimulaPerdaSE extends javax.swing.JFrame {
 
     SimulaPerdaSE simulaPerdaSE = null;
     
-    public DialogSimulaPerdaSE() {
+    public DialogSimulaPerdaSE(SimulaPerdaSE simulaPerdaSE) {
+        this.simulaPerdaSE = simulaPerdaSE;
         initComponents();
     }
 
@@ -90,7 +91,7 @@ public class DialogSimulaPerdaSE extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         
-        simulaPerdaSE = new SimulaPerdaSE(jList2);
+        simulaPerdaSE.simulaPerdaSE(jList2);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
@@ -124,7 +125,7 @@ public class DialogSimulaPerdaSE extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
-                new DialogSimulaPerdaSE().setVisible(true);
+
             }
         });
     }

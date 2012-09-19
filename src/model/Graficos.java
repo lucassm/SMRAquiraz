@@ -6,6 +6,7 @@ package model;
 
 import java.awt.Point;
 import javax.swing.JComponent;
+import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.WidgetAction;
 import org.netbeans.api.visual.widget.ImageWidget;
 import org.netbeans.api.visual.widget.LabelWidget;
@@ -33,6 +34,7 @@ public class Graficos {
         connectionLayer = new LayerWidget(scene);
         scene.addChild(mainLayer);
         scene.addChild(connectionLayer);
+        scene.getActions ().addAction (ActionFactory.createMouseCenteredZoomAction (1.1));
 
     }
 

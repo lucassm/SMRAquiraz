@@ -2,21 +2,21 @@
 
 <agenteAA nome="AQZ3" codigo="null" estado="null">
 	<agentesAA>
-		<AQZ2 estado="null" recurso="AT32" chave="CH22"/>
-		<AGF1 estado="null" recurso="AT33" chave="CH34"/>
+		<AQZ2 estado="null" recurso="AT8" chave="_RP2"/>
+		<AGF1 estado="null" recurso="AT9" chave="_RL3"/>
 	</agentesAA>
 	
 	<agentesAT>
-		<AT31 codigo="1" prioridade="1" estado="null" carregamento="null" carregamentoMaximo="200" chave1="CH31" chave2="CH32" comprimento="10" impedancia="0.5"/>
-		<AT32 codigo="2" prioridade="2" estado="null" carregamento="null" carregamentoMaximo="200" chave1="CH32" chave2="CH33" comprimento="10" impedancia="0.5"/>
-		<AT33 codigo="3" prioridade="3" estado="null" carregamento="null" carregamentoMaximo="200" chave1="CH33" chave2="CH34" comprimento="10" impedancia="0.5"/>
+		<AT31 codigo="1" prioridade="1" estado="null" carregamento="null" carregamentoMaximo="200" chave1="_21I5" chave2="_RS3" comprimento="10" impedancia="0.5"/>
+		<AT32 codigo="2" prioridade="2" estado="null" carregamento="null" carregamentoMaximo="200" chave1="_RS3" chave2="_RS4" comprimento="10" impedancia="0.5"/>
+		<AT33 codigo="3" prioridade="3" estado="null" carregamento="null" carregamentoMaximo="200" chave1="_RS4" chave2="_RL3" comprimento="10" impedancia="0.5"/>
 	</agentesAT>
 	
 	<agentesAE>
-		<CH31 codigo="1" tipo="normal" estado="fechado" atuacao="null" ordem="null" porta="4008"/>
-		<CH32 codigo="2" tipo="normal" estado="fechado" atuacao="null" ordem="null" porta="4009"/>
-                <CH22 codigo="3" tipo="encontro" estado="aberto" atuacao="null" ordem="null" porta="4010"/>
-		<CH33 codigo="4" tipo="normal" estado="fechado" atuacao="null" ordem="null" porta="4011"/>
+		<_21I5 codigo="1" tipo="normal" estado="fechado" atuacao="null" ordem="null" porta="4008"/>
+		<_RS3 codigo="2" tipo="normal" estado="fechado" atuacao="null" ordem="null" porta="4009"/>
+		<_RS4 codigo="3" tipo="encontro" estado="aberto" atuacao="null" ordem="null" porta="4010"/>
+		<_RL3 codigo="4" tipo="normal" estado="fechado" atuacao="null" ordem="null" porta="4011"/>
 		<CH34 codigo="5" tipo="encontro" estado="fechado" atuacao="null" ordem="null" porta="4012"/>
 	</agentesAE>
 	
