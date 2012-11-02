@@ -13,7 +13,7 @@ import org.netbeans.api.visual.widget.ImageWidget;
  */
 public class Subestacao {
     
-    public ImageWidget widget;
+    public SvgWidget widget;
     public String name;
     public float power;
     public float freePower;
@@ -22,9 +22,9 @@ public class Subestacao {
     public Subestacao(String name, Graficos grafico, String way, Point position) {
         
         if (name != null) {
-            widget = grafico.createImageWidget(way, "<html><b>SE "+name+"</b></html>", position);
+            widget = grafico.createSvgWidget(way, "<html><b>SE "+name+"</b></html>", position);
         }else{
-            widget = grafico.createImageWidget(way, null, position);
+            widget = grafico.createSvgWidget(way, null, position);
         }
         
         this.name = name;

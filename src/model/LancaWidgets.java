@@ -4,7 +4,12 @@
  */
 package model;
 
+import com.sun.jndi.toolkit.url.Uri;
 import java.awt.Point;
+import java.io.File;
+import java.net.URI;
+import java.net.URL;
+import java.util.List;
 import java.util.Vector;
 import javax.swing.JPanel;
 import org.netbeans.api.visual.widget.Widget;
@@ -44,25 +49,25 @@ public class LancaWidgets {
     public Trecho T12 = null;
     public Trecho T13 = null;
     
-    public Chave CH11 = null;
-    public Chave CH12 = null;
-    public Chave CH13 = null;
-    public Chave CH14 = null;
-    public Chave CH15 = null;
-    public Chave CH21 = null;
-    public Chave CH22 = null;
-    public Chave CH23 = null;
-    public Chave CH24 = null;
-    public Chave CH25 = null;
-    public Chave CH31 = null;
-    public Chave CH32 = null;
-    public Chave CH33 = null;
-    public Chave CH34 = null;
-    public Chave CH35 = null;
-    public Chave CH41 = null;
-    public Chave CH42 = null;
-    public Chave CH43 = null;
-    public Chave CH44 = null;
+    public Chave _21I7 = null;
+    public Chave _RP1 = null;
+    public Chave _RS1 = null;
+    public Chave _RL1 = null;
+    public Chave _21F8 = null;
+    public Chave _21I6 = null;
+    public Chave _RP2 = null;
+    public Chave _RS2 = null;
+    public Chave _RL2 = null;
+    public Chave _21M3 = null;
+    public Chave _21I5 = null;
+    public Chave _RS3 = null;
+    public Chave _RS4 = null;
+    public Chave _RL3 = null;
+    public Chave _21F7 = null;
+    public Chave _21I4 = null;
+    public Chave _RC1 = null;
+    public Chave _RS5 = null;
+    public Chave _RL4 = null;
     
     public Chave CHAQZ1 = null;
     public Chave CHAQZ2 = null;
@@ -74,125 +79,142 @@ public class LancaWidgets {
     public Chave CHAE1 = null;
     public Chave CHAE2 = null;
     
-    public Vector<Widget> chavesVector;
-
+    public Vector<SvgWidget> chavesVector;
+    public Vector<String> estadoChavesVector;
+    
     public LancaWidgets(JPanel jPanel) {
 
         this.painel = jPanel;
 
         grafico = new Graficos();
 
-        FTZ = new Subestacao(null, getGrafico(), "imagens/seFTZ.png", new Point(28, 18));
-        DMG = new Subestacao(null, getGrafico(), "imagens/seDMG.png", new Point(1136, 351));
-        AQZ = new Subestacao("AQZ", getGrafico(), "imagens/seAQZ.png", new Point(157, 274));
-        JAB = new Subestacao("JAB", getGrafico(), "imagens/seJAB.png", new Point(1055, 125));
-        MSJ = new Subestacao("MSJ", getGrafico(), "imagens/seMSJ.png", new Point(1055, 265));
-        AGF = new Subestacao("AGF", getGrafico(), "imagens/seAGF.png", new Point(1055, 378));
-        AE1 = new Subestacao("AE1", getGrafico(), "imagens/aeroGerador.png", new Point(400, 575));
-        AE2 = new Subestacao("AE2", getGrafico(), "imagens/aeroGerador.png", new Point(466, 575));
+        FTZ = new Subestacao(null, getGrafico(), new File("src/imagens/seFTZ.svg").toURI().toString(), new Point(28, 18));
+        DMG = new Subestacao(null, getGrafico(), new File("src/imagens/seDMG.svg").toURI().toString(), new Point(1136, 351));
+        AQZ = new Subestacao("AQZ", getGrafico(), new File("src/imagens/seAQZ.svg").toURI().toString(), new Point(157, 274));
+        JAB = new Subestacao("JAB", getGrafico(), new File("src/imagens/seJAB.svg").toURI().toString(), new Point(1055, 125));
+        MSJ = new Subestacao("MSJ", getGrafico(), new File("src/imagens/seMSJ.svg").toURI().toString(), new Point(1055, 265));
+        AGF = new Subestacao("AGF", getGrafico(), new File("src/imagens/seAGF.svg").toURI().toString(), new Point(1055, 378));
+        AE1 = new Subestacao("AE1", getGrafico(), new File("src/imagens/seAE1.svg").toURI().toString(), new Point(400, 575));
+        AE2 = new Subestacao("AE2", getGrafico(), new File("src/imagens/seAE1.svg").toURI().toString(), new Point(466, 575));
         
-        barraAQZ = new Barra("Barra Aquiraz", getGrafico(), "imagens/barraAQZ.png", new Point(297, 111));
-        barraJAB = new Barra("Barra Jabuti", getGrafico(), "imagens/barraJAB.png", new Point(954, 92));
-        barraMSJ = new Barra("Barra Messejana", getGrafico(), "imagens/barraMSJ.png", new Point(954, 252));
-        barraAGF = new Barra("Barra Agua Fria", getGrafico(), "imagens/barraAGF.png", new Point(954, 378));
+        barraAQZ = new Barra("Barra Aquiraz", getGrafico(), new File("src/imagens/barraAQZ.svg").toURI().toString(), new Point(297, 111));
+        barraJAB = new Barra("Barra Jabuti", getGrafico(), new File("src/imagens/barraJAB.svg").toURI().toString(), new Point(954, 92));
+        barraMSJ = new Barra("Barra Messejana", getGrafico(), new File("src/imagens/barraMSJ.svg").toURI().toString(), new Point(954, 252));
+        barraAGF = new Barra("Barra Agua Fria", getGrafico(), new File("src/imagens/barraAGF.svg").toURI().toString(), new Point(954, 378));
         
-        T1 = new Trecho("Trecho 1", getGrafico(), "imagens/trecho1.png", new Point(385, 179));
-        T2 = new Trecho("Trecho 2", getGrafico(), "imagens/trecho2.png", new Point(682, 179));
-        T3 = new Trecho("Trecho 3", getGrafico(), "imagens/trecho3.png", new Point(814, 179));
+        T1 = new Trecho("Trecho 1", getGrafico(), new File("src/imagens/trecho1.svg").toURI().toString(), new Point(385, 179));
+        T2 = new Trecho("Trecho 2", getGrafico(), new File("src/imagens/trecho2.svg").toURI().toString(), new Point(682, 179));
+        T3 = new Trecho("Trecho 3", getGrafico(), new File("src/imagens/trecho3.svg").toURI().toString(), new Point(814, 179));
         
-        T4 = new Trecho("Trecho 4", getGrafico(), "imagens/trecho4.png", new Point(385, 254));
-        T5 = new Trecho("Trecho 5", getGrafico(), "imagens/trecho5.png", new Point(682, 285));
-        T6 = new Trecho("Trecho 6", getGrafico(), "imagens/trecho6.png", new Point(814, 285));
+        T4 = new Trecho("Trecho 4", getGrafico(), new File("src/imagens/trecho4.svg").toURI().toString(), new Point(385, 254));
+        T5 = new Trecho("Trecho 5", getGrafico(), new File("src/imagens/trecho5.svg").toURI().toString(), new Point(682, 285));
+        T6 = new Trecho("Trecho 6", getGrafico(), new File("src/imagens/trecho6.svg").toURI().toString(), new Point(814, 285));
         
-        T7 = new Trecho("Trecho 7", getGrafico(), "imagens/trecho7.png", new Point(385, 393));
-        T8 = new Trecho("Trecho 8", getGrafico(), "imagens/trecho8.png", new Point(500, 360));
-        T9 = new Trecho("Trecho 9", getGrafico(), "imagens/trecho9.png", new Point(682, 393));
-        
-        
-        T10 = new Trecho("Trecho 10", getGrafico(), "imagens/trecho10.png", new Point(813, 393));
-        T11 = new Trecho("Trecho 11", getGrafico(), "imagens/trecho11.png", new Point(682, 502));
-        T12 = new Trecho("Trecho 12", getGrafico(), "imagens/trecho12.png", new Point(385, 502));
-        T13 = new Trecho("Carga", getGrafico(), "imagens/carga.png", new Point(545, 575));
+        T7 = new Trecho("Trecho 7", getGrafico(), new File("src/imagens/trecho7.svg").toURI().toString(), new Point(385, 393));
+        T8 = new Trecho("Trecho 8", getGrafico(), new File("src/imagens/trecho8.svg").toURI().toString(), new Point(500, 360));
+        T9 = new Trecho("Trecho 9", getGrafico(), new File("src/imagens/trecho9.svg").toURI().toString(), new Point(682, 393));
         
         
-        CH11 = new Chave("21I7", getGrafico(), "imagens/religadorNF.png", "alimentador",new Point(341, 161));
-        CH12 = new Chave("RP1", getGrafico(), "imagens/religadorNA.png", "alimentador", new Point(531, 211));
-        CH13 = new Chave("RS1", getGrafico(), "imagens/religadorNF.png", "alimentador", new Point(638, 161));
-        CH14 = new Chave("RL1", getGrafico(), "imagens/religadorNA.png", "alimentador", new Point(770, 161));
-        CH15 = new Chave("21F8", getGrafico(), "imagens/religadorNF.png", "alimentador", new Point(912, 161));
+        T10 = new Trecho("Trecho 10", getGrafico(), new File("src/imagens/trecho10.svg").toURI().toString(), new Point(813, 393));
+        T11 = new Trecho("Trecho 11", getGrafico(), new File("src/imagens/trecho11.svg").toURI().toString(), new Point(385, 502));
+        T12 = new Trecho("Trecho 12", getGrafico(), new File("src/imagens/trecho12.svg").toURI().toString(), new Point(682, 502));
+        T13 = new Trecho("Carga", getGrafico(), new File("src/imagens/carga.svg").toURI().toString(), new Point(545, 575));
         
-        CH21 = new Chave("21I6", getGrafico(), "imagens/religadorNF.png", "alimentador", new Point(341, 268));
-        CH22 = new Chave("RP2", getGrafico(), "imagens/religadorNA.png", "alimentador", new Point(531, 318));
-        CH23 = new Chave("RS2", getGrafico(), "imagens/religadorNF.png", "alimentador", new Point(638, 268));
-        CH24 = new Chave("RL2", getGrafico(), "imagens/religadorNA.png", "alimentador", new Point(770, 268));
-        CH25 = new Chave("21M3", getGrafico(), "imagens/religadorNF.png", "alimentador", new Point(912, 268));
         
-        CH31 = new Chave("21I5", getGrafico(), "imagens/religadorNF.png", "alimentador", new Point(341, 376));
-        CH32 = new Chave("RS3", getGrafico(), "imagens/religadorNF.png", "alimentador", new Point(458, 376));
-        CH33 = new Chave("RS4", getGrafico(), "imagens/religadorNF.png", "alimentador", new Point(638, 376));
-        CH34 = new Chave("RL3", getGrafico(), "imagens/religadorNA.png", "alimentador", new Point(770, 376));
-        CH35 = new Chave("21I7", getGrafico(), "imagens/religadorNF.png", "alimentador", new Point(912, 415));
+        _21I7 = new Chave("21I7", getGrafico(), new File("src/imagens/religadorNF.svg").toURI().toString(), "alimentador",new Point(341, 161));
+        _RP1 = new Chave("RP1", getGrafico(), new File("src/imagens/religadorNA.svg").toURI().toString(), "alimentador", new Point(531, 211));
+        _RS1 = new Chave("RS1", getGrafico(), new File("src/imagens/religadorNF.svg").toURI().toString(), "alimentador", new Point(638, 161));
+        _RL1 = new Chave("RL1", getGrafico(), new File("src/imagens/religadorNA.svg").toURI().toString(), "alimentador",new Point(770, 161));
+        _21F8 = new Chave("21F8", getGrafico(), new File("src/imagens/religadorNF.svg").toURI().toString(), "alimentador", new Point(912, 161));
         
-        CH41 = new Chave("21I4", getGrafico(), "imagens/religadorNF.png", "alimentador", new Point(341, 483));
-        CH42 = new Chave("RC1", getGrafico(), "imagens/religadorNF.png", "alimentador", new Point(532, 532));
-        CH43 = new Chave("RS5", getGrafico(), "imagens/religadorNF.png", "alimentador", new Point(638, 483));
-        CH44 = new Chave("RL4", getGrafico(), "imagens/religadorNA.png", "alimentador", new Point(770, 483));
+        _21I6 = new Chave("21I6", getGrafico(), new File("src/imagens/religadorNF.svg").toURI().toString(), "alimentador", new Point(341, 268));
+        _RP2 = new Chave("RP2", getGrafico(), new File("src/imagens/religadorNA.svg").toURI().toString(), "alimentador", new Point(531, 318));
+        _RS2 = new Chave("RS2", getGrafico(), new File("src/imagens/religadorNF.svg").toURI().toString(), "alimentador", new Point(638, 268));
+        _RL2 = new Chave("RL2", getGrafico(), new File("src/imagens/religadorNA.svg").toURI().toString(), "alimentador", new Point(770, 268));
+        _21M3 = new Chave("21M3", getGrafico(), new File("src/imagens/religadorNF.svg").toURI().toString(), "alimentador", new Point(912, 268));
+        
+        _21I5 = new Chave("21I5", getGrafico(), new File("src/imagens/religadorNF.svg").toURI().toString(), "alimentador", new Point(341, 376));
+        _RS3 = new Chave("RS3", getGrafico(), new File("src/imagens/religadorNF.svg").toURI().toString(), "alimentador", new Point(458, 376));
+        _RS4 = new Chave("RS4", getGrafico(), new File("src/imagens/religadorNF.svg").toURI().toString(), "alimentador", new Point(638, 376));
+        _RL3 = new Chave("RL3", getGrafico(), new File("src/imagens/religadorNA.svg").toURI().toString(), "alimentador", new Point(770, 376));
+        _21F7 = new Chave("21F7", getGrafico(), new File("src/imagens/religadorNF.svg").toURI().toString(), "alimentador", new Point(912, 415));
+        
+        _21I4 = new Chave("21I4", getGrafico(), new File("src/imagens/religadorNF.svg").toURI().toString(), "alimentador", new Point(341, 483));
+        _RC1 = new Chave("RC1", getGrafico(), new File("src/imagens/religadorNF.svg").toURI().toString(), "alimentador", new Point(532, 532));
+        _RS5 = new Chave("RS5", getGrafico(), new File("src/imagens/religadorNF.svg").toURI().toString(), "alimentador",new Point(638, 483));
+        _RL4 = new Chave("RL4", getGrafico(), new File("src/imagens/religadorNA.svg").toURI().toString(), "alimentador", new Point(770, 483));
 
-        CHAQZ1 = new Chave("11T1", getGrafico(), "imagens/religadorNF.png", "subestacao", new Point(256, 285));
-        CHAQZ2 = new Chave("11T2", getGrafico(), "imagens/religadorNF.png", "subestacao", new Point(256, 359));
-        CHJAB1 = new Chave("11T1", getGrafico(), "imagens/religadorNF.png", "subestacao", new Point(1014, 128));
-        CHJAB2 = new Chave("11T2", getGrafico(), "imagens/religadorNF.png", "subestacao", new Point(1014, 186));
-        CHMSJ1 = new Chave("11T1", getGrafico(), "imagens/religadorNF.png", "subestacao", new Point(1014, 269));
-        CHAGF1 = new Chave("11T1", getGrafico(), "imagens/religadorNF.png", "subestacao", new Point(1014, 382));
-        CHAGF2 = new Chave("11T2", getGrafico(), "imagens/religadorNF.png", "subestacao", new Point(1014, 440));
-        CHAE1 = new Chave("RW1", getGrafico(), "imagens/religadorNF.png", "subestacao", new Point(400, 532));
-        CHAE2 = new Chave("RW2", getGrafico(), "imagens/religadorNF.png", "subestacao", new Point(466, 532));
+        CHAQZ1 = new Chave("11T1", getGrafico(), new File("src/imagens/religadorNF.svg").toURI().toString(), "subestacao", new Point(256, 285));
+        CHAQZ2 = new Chave("11T2", getGrafico(), new File("src/imagens/religadorNF.svg").toURI().toString(), "subestacao", new Point(256, 359));
+        CHJAB1 = new Chave("11T1", getGrafico(), new File("src/imagens/religadorNF.svg").toURI().toString(), "subestacao", new Point(1014, 128));
+        CHJAB2 = new Chave("11T2", getGrafico(), new File("src/imagens/religadorNF.svg").toURI().toString(), "subestacao", new Point(1014, 186));
+        CHMSJ1 = new Chave("11T1", getGrafico(), new File("src/imagens/religadorNF.svg").toURI().toString(), "subestacao", new Point(1014, 269));
+        CHAGF1 = new Chave("11T1", getGrafico(), new File("src/imagens/religadorNF.svg").toURI().toString(), "subestacao", new Point(1014, 382));
+        CHAGF2 = new Chave("11T2", getGrafico(), new File("src/imagens/religadorNF.svg").toURI().toString(), "subestacao", new Point(1014, 440));
+        CHAE1 = new Chave("RW1", getGrafico(), new File("src/imagens/religadorNF.svg").toURI().toString(), "subestacao", new Point(400, 532));
+        CHAE2 = new Chave("RW2", getGrafico(), new File("src/imagens/religadorNF.svg").toURI().toString(), "subestacao", new Point(466, 532));
 
-        grafico.createImageWidget("imagens/legenda.png", null, new Point(59, 452));
+        grafico.createSvgWidget(new File("src/imagens/legenda.svg").toURI().toString(), null, new Point(59, 452));
 
         grafico.createImageWidget("imagens/coelce.png", null, new Point(1041, 583));
 
-        grafico.createImageWidget("imagens/ufc.png", null, new Point(1191, 547));
+        grafico.createSvgWidget(new File("src/imagens/ufc.svg").toURI().toString(), null, new Point(1191, 547));
 
         painel.setLayout(new java.awt.BorderLayout());
 
         chavesVector = new Vector();
+        estadoChavesVector = new Vector();
 
-        chavesVector.add(CH11.widget);
+        chavesVector.add(_21I7.widget);
+        estadoChavesVector.add("fechado");
+        
+        chavesVector.add(_RP1.widget);
+        estadoChavesVector.add("aberto");
+        
+        chavesVector.add(_RS1.widget);
+        estadoChavesVector.add("fechado");
 
-        chavesVector.add(CH12.widget);
+        chavesVector.add(_RL1.widget);
+        estadoChavesVector.add("aberto");
+        
+        chavesVector.add(_21I6.widget);
+        estadoChavesVector.add("fechado");
 
-        chavesVector.add(CH13.widget);
+        chavesVector.add(_RP2.widget);
+        estadoChavesVector.add("aberto");
+        
+        chavesVector.add(_RS2.widget);
+        estadoChavesVector.add("fechado");
 
-        chavesVector.add(CH14.widget);
+        chavesVector.add(_RL2.widget);
+        estadoChavesVector.add("aberto");
 
-        chavesVector.add(CH21.widget);
+        chavesVector.add(_21I5.widget);
+        estadoChavesVector.add("fechado");
 
-        chavesVector.add(CH22.widget);
+        chavesVector.add(_RS3.widget);
+        estadoChavesVector.add("fechado");
+        
+        chavesVector.add(_RS4.widget);
+        estadoChavesVector.add("fechado");
 
-        chavesVector.add(CH23.widget);
+        chavesVector.add(_RL3.widget);
+        estadoChavesVector.add("aberto");
 
-        chavesVector.add(CH24.widget);
+        chavesVector.add(_21F7.widget);
+        estadoChavesVector.add("fechado");
+        
+        chavesVector.add(_21I4.widget);
+        estadoChavesVector.add("fechado");
 
-        chavesVector.add(CH31.widget);
+        chavesVector.add(_RC1.widget);
+        estadoChavesVector.add("fechado");
 
-        chavesVector.add(CH32.widget);
+        chavesVector.add(_RS5.widget);
+        estadoChavesVector.add("fechado");
 
-        chavesVector.add(CH33.widget);
-
-        chavesVector.add(CH34.widget);
-
-        chavesVector.add(CH35.widget);
-
-        chavesVector.add(CH41.widget);
-
-        chavesVector.add(CH42.widget);
-
-        chavesVector.add(CH43.widget);
-
-        chavesVector.add(CH44.widget);
-
-        //chavesVector.add(CH45.widget);
+        chavesVector.add(_RL4.widget);
+        estadoChavesVector.add("aberto");
          
         
         Vector<Servidor> servidores = new Vector(16);
@@ -538,251 +560,251 @@ public class LancaWidgets {
      * @return the CH11
      */
     public Chave getCH11() {
-        return CH11;
+        return _21I7;
     }
 
     /**
      * @param CH11 the CH11 to set
      */
     public void setCH11(Chave CH11) {
-        this.CH11 = CH11;
+        this._21I7 = CH11;
     }
 
     /**
      * @return the CH12
      */
     public Chave getCH12() {
-        return CH12;
+        return _RP1;
     }
 
     /**
      * @param CH12 the CH12 to set
      */
     public void setCH12(Chave CH12) {
-        this.CH12 = CH12;
+        this._RP1 = CH12;
     }
 
     /**
      * @return the CH13
      */
     public Chave getCH13() {
-        return CH13;
+        return _RS1;
     }
 
     /**
      * @param CH13 the CH13 to set
      */
     public void setCH13(Chave CH13) {
-        this.CH13 = CH13;
+        this._RS1 = CH13;
     }
 
     /**
      * @return the CH14
      */
     public Chave getCH14() {
-        return CH14;
+        return _RL1;
     }
 
     /**
      * @param CH14 the CH14 to set
      */
     public void setCH14(Chave CH14) {
-        this.CH14 = CH14;
+        this._RL1 = CH14;
     }
 
     /**
      * @return the CH21
      */
     public Chave getCH21() {
-        return CH21;
+        return _21I6;
     }
 
     /**
      * @param CH21 the CH21 to set
      */
     public void setCH21(Chave CH21) {
-        this.CH21 = CH21;
+        this._21I6 = CH21;
     }
 
     /**
      * @return the CH22
      */
     public Chave getCH22() {
-        return CH22;
+        return _RP2;
     }
 
     /**
      * @param CH22 the CH22 to set
      */
     public void setCH22(Chave CH22) {
-        this.CH22 = CH22;
+        this._RP2 = CH22;
     }
 
     /**
      * @return the CH23
      */
     public Chave getCH23() {
-        return CH23;
+        return _RS2;
     }
 
     /**
      * @param CH23 the CH23 to set
      */
     public void setCH23(Chave CH23) {
-        this.CH23 = CH23;
+        this._RS2 = CH23;
     }
 
     /**
      * @return the CH24
      */
     public Chave getCH24() {
-        return CH24;
+        return _RL2;
     }
 
     /**
      * @param CH24 the CH24 to set
      */
     public void setCH24(Chave CH24) {
-        this.CH24 = CH24;
+        this._RL2 = CH24;
     }
 
     /**
      * @return the CH31
      */
     public Chave getCH31() {
-        return CH31;
+        return _21I5;
     }
 
     /**
      * @param CH31 the CH31 to set
      */
     public void setCH31(Chave CH31) {
-        this.CH31 = CH31;
+        this._21I5 = CH31;
     }
 
     /**
      * @return the CH32
      */
     public Chave getCH32() {
-        return CH32;
+        return _RS3;
     }
 
     /**
      * @param CH32 the CH32 to set
      */
     public void setCH32(Chave CH32) {
-        this.CH32 = CH32;
+        this._RS3 = CH32;
     }
 
     /**
      * @return the CH33
      */
     public Chave getCH33() {
-        return CH33;
+        return _RS4;
     }
 
     /**
      * @param CH33 the CH33 to set
      */
     public void setCH33(Chave CH33) {
-        this.CH33 = CH33;
+        this._RS4 = CH33;
     }
 
     /**
      * @return the CH34
      */
     public Chave getCH34() {
-        return CH34;
+        return _RL3;
     }
 
     /**
      * @param CH34 the CH34 to set
      */
     public void setCH34(Chave CH34) {
-        this.CH34 = CH34;
+        this._RL3 = CH34;
     }
 
     /**
      * @return the CH35
      */
     public Chave getCH35() {
-        return CH35;
+        return _21F7;
     }
 
     /**
      * @param CH35 the CH35 to set
      */
     public void setCH35(Chave CH35) {
-        this.CH35 = CH35;
+        this._21F7 = CH35;
     }
 
     /**
      * @return the CH41
      */
     public Chave getCH41() {
-        return CH41;
+        return _21I4;
     }
 
     /**
      * @param CH41 the CH41 to set
      */
     public void setCH41(Chave CH41) {
-        this.CH41 = CH41;
+        this._21I4 = CH41;
     }
 
     /**
      * @return the CH42
      */
     public Chave getCH42() {
-        return CH42;
+        return _RC1;
     }
 
     /**
      * @param CH42 the CH42 to set
      */
     public void setCH42(Chave CH42) {
-        this.CH42 = CH42;
+        this._RC1 = CH42;
     }
 
     /**
      * @return the CH43
      */
     public Chave getCH43() {
-        return CH43;
+        return _RS5;
     }
 
     /**
      * @param CH43 the CH43 to set
      */
     public void setCH43(Chave CH43) {
-        this.CH43 = CH43;
+        this._RS5 = CH43;
     }
 
     /**
      * @return the CH44
      */
     public Chave getCH44() {
-        return CH44;
+        return _RL4;
     }
 
     /**
      * @param CH44 the CH44 to set
      */
     public void setCH44(Chave CH44) {
-        this.CH44 = CH44;
+        this._RL4 = CH44;
     }
 
     /**
      * @return the chavesVector
      */
-    public Vector<Widget> getChavesVector() {
+    public Vector<SvgWidget> getChavesVector() {
         return chavesVector;
     }
 
     /**
      * @param chavesVector the chavesVector to set
      */
-    public void setChavesVector(Vector<Widget> chavesVector) {
+    public void setChavesVector(Vector<SvgWidget> chavesVector) {
         this.chavesVector = chavesVector;
     }
     

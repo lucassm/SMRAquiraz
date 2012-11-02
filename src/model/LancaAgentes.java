@@ -46,6 +46,7 @@ public class LancaAgentes {
         jade.startAgent(jade.cc, "_RC1", "AgenteDeEquipamento", null);
         jade.startAgent(jade.cc, "_RL1", "AgenteDeEquipamento", null);
         jade.startAgent(jade.cc, "_RL2", "AgenteDeEquipamento", null);
+        jade.startAgent(jade.cc, "_RL3", "AgenteDeEquipamento", null);
         jade.startAgent(jade.cc, "_RL4", "AgenteDeEquipamento", null);
         jade.startAgent(jade.cc, "_RP1", "AgenteDeEquipamento", null);
         jade.startAgent(jade.cc, "_RP2", "AgenteDeEquipamento", null);

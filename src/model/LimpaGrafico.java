@@ -4,9 +4,12 @@
  */
 package model;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Vector;
 import org.netbeans.api.visual.widget.Widget;
+import org.openide.util.Exceptions;
 
 /**
  *
@@ -14,14 +17,16 @@ import org.netbeans.api.visual.widget.Widget;
  */
 public class LimpaGrafico {
 
-    Widget widget;
+    SvgWidget widget;
     Vector<Widget> chavesVector;
-    SimulaCurto simulaCurto;
+    Vector<String> estadoChavesVector;
+    Simulacao simulacao;
 
-    public LimpaGrafico(SimulaCurto simulaCurto, Vector chavesVector) {
+    public LimpaGrafico(Simulacao simulacao, Vector chavesVector, Vector estadoVector) {
 
-        this.simulaCurto = simulaCurto;
+        this.simulacao = simulacao;
         this.chavesVector = chavesVector;
+        this.estadoChavesVector = estadoVector;
 
     }
 
@@ -29,20 +34,33 @@ public class LimpaGrafico {
 
         for (int i = 0; i < chavesVector.size(); i++) {
 
-            Widget w = chavesVector.get(i);
-            w.setBorder(javax.swing.BorderFactory.createEmptyBorder());
+            if (estadoChavesVector.get(i).equalsIgnoreCase("aberto")) {
+                SvgWidget w = (SvgWidget) chavesVector.get(i);
+                try {
+                    w.setSvgUri(new File("src/imagens/religadorNA.svg").toURI().toString());
+                } catch (IOException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+            }else if (estadoChavesVector.get(i).equalsIgnoreCase("fechado")){
+                SvgWidget w = (SvgWidget) chavesVector.get(i);
+                try {
+                    w.setSvgUri(new File("src/imagens/religadorNF.svg").toURI().toString());
+                } catch (IOException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+            }
         }
         
-        EfeitoAlerta objetoAlerta = null;
+        Simulacao.EfeitoAlerta objetoAlerta = null;
         
-        for (int i = 0; i < simulaCurto.efeitosAlerta.size(); i++) {
-            System.out.println("Widget apagado: "+i);
-            objetoAlerta = (EfeitoAlerta) simulaCurto.efeitosAlerta.get(i);
-            widget = objetoAlerta.w;
+        for (int i = 0; i < simulacao.efeitosAlerta.size(); i++) {
+            objetoAlerta = simulacao.efeitosAlerta.get(i);
+            
+            widget = (SvgWidget) objetoAlerta.w;
             widget.setVisible(false);
             objetoAlerta.acao = false;
         }
         
-        simulaCurto.efeitoAlerta.acao = false;
+        simulacao.efeitoAlerta.acao = false;
     }
 }

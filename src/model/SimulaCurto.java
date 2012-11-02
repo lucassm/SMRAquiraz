@@ -113,55 +113,55 @@ public class SimulaCurto {
 
         if (trecho.equalsIgnoreCase("AT1")) {
 
-            w = grafico.createImageWidget("imagens/curto.png", null, new Point(431, 127));
+            w = grafico.createSvgWidget("file:///home/lucas/NetBeansProjects/SMRAquiraz/src/imagens/curto.svg", null, new Point(431, 127));
 
         } else if (trecho.equalsIgnoreCase("AT2")) {
 
-            w = grafico.createImageWidget("imagens/curto.png", null, new Point(691, 127));
+            w = grafico.createSvgWidget("file:///home/lucas/NetBeansProjects/SMRAquiraz/src/imagens/curto.svg", null, new Point(691, 127));
 
         } else if (trecho.equalsIgnoreCase("AT3")) {
 
-            w = grafico.createImageWidget("imagens/curto.png", null, new Point(828, 127));
+            w = grafico.createSvgWidget("file:///home/lucas/NetBeansProjects/SMRAquiraz/src/imagens/curto.svg", null, new Point(828, 127));
 
         } else if (trecho.equalsIgnoreCase("AT4")) {
 
-            w = grafico.createImageWidget("imagens/curto.png", null, new Point(431, 236));
+            w = grafico.createSvgWidget("file:///home/lucas/NetBeansProjects/SMRAquiraz/src/imagens/curto.svg", null, new Point(431, 236));
 
         } else if (trecho.equalsIgnoreCase("AT5")) {
 
-            w = grafico.createImageWidget("imagens/curto.png", null, new Point(691, 236));
+            w = grafico.createSvgWidget("file:///home/lucas/NetBeansProjects/SMRAquiraz/src/imagens/curto.svg", null, new Point(691, 236));
 
         } else if (trecho.equalsIgnoreCase("AT6")) {
 
-            w = grafico.createImageWidget("imagens/curto.png", null, new Point(828, 236));
+            w = grafico.createSvgWidget("file:///home/lucas/NetBeansProjects/SMRAquiraz/src/imagens/curto.svg", null, new Point(828, 236));
 
         } else if (trecho.equalsIgnoreCase("AT7")) {
 
-            w = grafico.createImageWidget("imagens/curto.png", null, new Point(394, 342));
+            w = grafico.createSvgWidget("file:///home/lucas/NetBeansProjects/SMRAquiraz/src/imagens/curto.svg", null, new Point(394, 342));
 
         } else if (trecho.equalsIgnoreCase("AT8")) {
 
-            w = grafico.createImageWidget("imagens/curto.png", null, new Point(575, 342));
+            w = grafico.createSvgWidget("file:///home/lucas/NetBeansProjects/SMRAquiraz/src/imagens/curto.svg", null, new Point(575, 342));
 
         } else if (trecho.equalsIgnoreCase("AT9")) {
 
-            w = grafico.createImageWidget("imagens/curto.png", null, new Point(696, 342));
+            w = grafico.createSvgWidget("file:///home/lucas/NetBeansProjects/SMRAquiraz/src/imagens/curto.svg", null, new Point(696, 342));
 
         } else if (trecho.equalsIgnoreCase("AT10")) {
 
-            w = grafico.createImageWidget("imagens/curto.png", null, new Point(834, 342));
+            w = grafico.createSvgWidget("file:///home/lucas/NetBeansProjects/SMRAquiraz/src/imagens/curto.svg", null, new Point(834, 342));
 
         } else if (trecho.equalsIgnoreCase("AT11")) {
 
-            w = grafico.createImageWidget("imagens/curto.png", null, new Point(445, 445));
+            w = grafico.createSvgWidget("file:///home/lucas/NetBeansProjects/SMRAquiraz/src/imagens/curto.svg", null, new Point(445, 445));
 
         } else if (trecho.equalsIgnoreCase("AT12")) {
 
-            w = grafico.createImageWidget("imagens/curto.png", null, new Point(695, 445));
+            w = grafico.createSvgWidget("file:///home/lucas/NetBeansProjects/SMRAquiraz/src/imagens/curto.svg", null, new Point(695, 445));
 
         } else if (trecho.equalsIgnoreCase("AT13")) {
 
-            w = grafico.createImageWidget("imagens/curto.png", null, new Point(570, 590));
+            w = grafico.createSvgWidget("file:///home/lucas/NetBeansProjects/SMRAquiraz/src/imagens/curto.svg", null, new Point(570, 590));
 
         }
 
@@ -197,6 +197,8 @@ class EfeitoAlerta implements Runnable {
                 } catch (InterruptedException ex) {
                     Exceptions.printStackTrace(ex);
                 }
+            }else if(!acao){
+                return;
             }
 
         }//fim do while 1   

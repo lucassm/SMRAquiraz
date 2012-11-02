@@ -15,12 +15,12 @@
 // Você deve ter recebido uma cópia da Licença Pública Geral GNU
 // junto com SMRAquiraz, se não, acesse <http://www.gnu.org/licenses/>
 
-
 /*****************************************************
  **
- **			AGENTE DE TRECHO
- ** 
- *****************************************************/
+ **	AGENTE DE TRECHO  
+ **
+ ****************************************************/
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -32,6 +32,7 @@ import org.jdom.input.SAXBuilder;
 
 import jade.core.AID;
 import jade.core.Agent;
+import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
@@ -44,83 +45,51 @@ import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 import java.util.Locale;
+import model.Funcionalidades;
 
 public class AgenteDeTrecho extends Agent {
 
-    private static final long serialVersionUID = 1L;
-    MessageTemplate filtro1 = MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_SUBSCRIBE);
-    Element agenteAlimentadorBD = null;
+    public SubscriptionResponder comportamentoDeRecomposicaoDeTrecho = null;
+    public OneShotBehaviour comportamentoDeInicializacao = null;
+    public MessageTemplate filtro1 = MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_SUBSCRIBE);
+    public Element agenteAlimentadorBD = null;
+    public Funcionalidades funcionalidades = null;
 
     public void setup() {
 
-        final Element agenteTrechoBD = carregarBD(this.getLocalName());
-
-        /***************************************************************
-         *                                                             *
-         * Comportamento Temporal TickerBehaviour de 100ms             *
-         *                                                             *
-         **************************************************************/
-        addBehaviour(new TickerBehaviour(this, 100) {
-
-            /*
-             * Método onTick()
-             * 
-             * Este método executao comportamento temporal de 100ms
-             * e verifica por alguma requisição por parte do sistema
-             * para que possa iniciar o procedimento de recomposição
-             * 
-             */
-            public void onTick() {
-                ACLMessage msg1 = receive();
-                if (msg1 != null) {
-
-                    exibirMensagem(msg1);
-                    if (msg1.getContent().contains("curto")) {
-
-                        String agenteAlimentador = agenteTrechoBD.getChild("agenteAA").getAttributeValue("nome");
-                        ACLMessage msg2 = new ACLMessage(ACLMessage.REQUEST);
-                        msg2.setContent(msg1.getContent());
-                        msg2.setEncoding("curto");
-                        msg2.addReceiver(new AID(agenteAlimentador, AID.ISLOCALNAME));
-
-                        /***********************************************                
-                         *                                             *
-                         * Comportamento FIPA-Request                  *
-                         *                                             *
-                         **********************************************/
-                        addBehaviour(new AchieveREInitiator(myAgent, msg2) {
-
-                            protected void handleInform(ACLMessage inform) {
-                                exibirMensagem(inform);
-                            }
-                        });//fim do comportamento FIPA-Request
-                    }
-
-                }//fim do if msg != null
-
-            }//fim do if (msg.Content == "curto")
-        });//fim do TickerBehaviour
-
         
-        
-        /***************************************************************
-         *                                                             *
-         *              Comportamento FIPA-Subscribe                   *
-         *                                                             *
-         **************************************************************/
-        addBehaviour(new SubscriptionResponder(this, filtro1, null) {
+        /***********************************************************************
+         *                                                                     *
+         *          Comportamento OneShot de Inicialização do agente           * 
+         *                                                                     *
+         **********************************************************************/
+        comportamentoDeInicializacao = new OneShotBehaviour(this) {
+            @Override
+            public void action() {
 
+                funcionalidades = new Funcionalidades(myAgent);
+
+            }
+        };
+
+
+        /***********************************************************************
+         *                                                                     *
+         *               Comportamento FIPA-Subscribe                          *
+         *                                                                     *
+         ***********************************************************************/
+        comportamentoDeRecomposicaoDeTrecho = new SubscriptionResponder(this, filtro1, null) {
             /**
              * Método handleSubscription()
-             * 
-             * Este método recebe uma mensagem do tipo SUBSCRIBE de seu respectivo
-             * agente de alimentador para que possa realizar a recomposição de seu
-             * trecho, analisando então as condições de carregamento dos condutores
-             * caso realise a recomposição
+             *
+             * Este método recebe uma mensagem do tipo SUBSCRIBE de seu
+             * respectivo agente de alimentador para que possa realizar a
+             * recomposição de seu trecho, analisando então as condições de
+             * carregamento dos condutores caso realise a recomposição
              */
             protected ACLMessage handleSubscription(final ACLMessage subscription) {
 
-                exibirMensagem(subscription);
+                funcionalidades.exibirMensagem(subscription);
 
                 // Carregando o banco de dados do agente alimentador
                 try {
@@ -172,9 +141,9 @@ public class AgenteDeTrecho extends Agent {
                                 msgRetorno.setPerformative(ACLMessage.REFUSE);
                                 msgRetorno.setContent("Nao foi Possivel Recompor o Trecho");
                             }//fim de if (carregamento + carregamentoAdicional <= carregamentoMaximo)
-                            
+
                         }//fim de if (agenteTrecho.getAttributeValue("estado").equalsIgnoreCase("rescomposto"))
-                        
+
                     }//fim de for() que a analisa a capacidade dos condutores após recomosição
 
                     //Caso seja o primeiro trecho a ser remposto no alimentador
@@ -184,11 +153,12 @@ public class AgenteDeTrecho extends Agent {
 
                         msgRetorno.setPerformative(ACLMessage.AGREE);
                     }
-                    
-                    /*****************************************
-                     * Inicio do Algoritmo de recomposição   *
-                     ****************************************/
-                    
+
+                    /**
+                     * ***************************************
+                     * Inicio do Algoritmo de recomposição *
+                     ***************************************
+                     */
                     //Entra no if() caso seja o primeiro trecho de recomposição
                     if (agenteAlimentadorBD.getAttributeValue("codigo").equalsIgnoreCase("1")) {
 
@@ -209,7 +179,7 @@ public class AgenteDeTrecho extends Agent {
                         }//Fim do if() que avalia se o trecho a ser recomposto é o defeituoso
 
                     } else {//caso não seja o primeiro trecho a ser recomposto cai no else()
-                        
+
                         //Detectando a chave a ser fechada
                         String chave1 = agenteAlimentadorBD.getChild("agentesAT").getChild(myAgent.getLocalName()).getAttributeValue("chave1");
                         String chave2 = agenteAlimentadorBD.getChild("agentesAT").getChild(myAgent.getLocalName()).getAttributeValue("chave2");
@@ -219,34 +189,34 @@ public class AgenteDeTrecho extends Agent {
                         int codigoChave2 = Integer.parseInt(agenteAlimentadorBD.getChild("agentesAE").getChild(chave2).getAttributeValue("codigo"));
                         int ordem = 0;
                         int maxOrdem = 0;
-                        
+
                         //Cria uma lista com todos as agentes de equipamento
                         List agentesAE = agenteAlimentadorBD.getChild("agentesAE").getChildren();
-                        
+
                         //Este for() encontra a ultima chave fechada pela recomposição automática
                         for (int j = 0; j < agentesAE.size(); j++) {
 
                             //Captura um agente de equipamento do objeto Lista
                             Element agenteAE = (Element) agentesAE.get(j);
-                            
+
                             //Entra no if() se o agente de equipamento já houver participado
                             //da recomposição
                             if (!agenteAE.getAttributeValue("ordem").equalsIgnoreCase("null")) {
-                                
+
                                 ordem = Integer.parseInt(agenteAE.getAttributeValue("ordem"));
-                                
+
                                 //seleciona o último agente de equipamento a ter participado
                                 //da recomposição
                                 if (ordem > maxOrdem) {
-                                    
+
                                     maxOrdem = ordem;
                                     codigo = Integer.parseInt(agenteAE.getAttributeValue("codigo"));
                                 }//fim do if (ordem > maxOrdem)
 
                             }//fim do if (!agenteAE.getAttributeValue("ordem").equalsIgnoreCase("null"))
-                            
+
                         }//fim do for()
-                        
+
                         //Este if() toma a decisão de qual das duas chaves que isolam o trecho
                         //deve ser fechada para a realização da recomposição
                         if (Math.abs(codigo - codigoChave1) < Math.abs(codigo - codigoChave2)) {
@@ -254,18 +224,18 @@ public class AgenteDeTrecho extends Agent {
                         } else {
                             chaveEscolhida = chave2;
                         }
-                        
+
                         //Atualiza a chave de recomposião como a mais recentemente utilizada
                         agenteAlimentadorBD.getChild("agentesAE").getChild(chaveEscolhida).setAttribute("ordem", String.valueOf(maxOrdem + 1));
-                        
+
                         msgFechaChave.addReceiver(new AID(chaveEscolhida, AID.ISLOCALNAME));
                     }//fim do if (agenteAlimentadorBD.getAttributeValue("codigo").equalsIgnoreCase("1"))
 
-                    
+
                     //Analisa se a corrente disponível é suficiente para realizar a recomposição
                     double correnteDisponivel = Double.parseDouble(agenteAlimentadorBD.getChild("correnteDisponivel").getAttributeValue("valor"));
                     double correnteNecessaria = Double.parseDouble(agenteAlimentadorBD.getChild("agentesAT").getChild(myAgent.getLocalName()).getAttributeValue("carregamento"));
-                    
+
                     //Caso a corrente disponível não seja suficiente para executar a recomposição
                     //uma mensagem de REFUSE é enviada para o agente de alimentador
                     if (correnteDisponivel - correnteNecessaria < 0) {
@@ -277,13 +247,13 @@ public class AgenteDeTrecho extends Agent {
                 //Entra no if() caso o fechamento da chave seja autorizado
                 if (msgRetorno.getPerformative() == ACLMessage.AGREE) {
 
-                    /***********************************************************
+                    /**
+                     * *********************************************************
                      *                                                         *
-                     *      Comportamento FIPA-RequestInitiator                *
-                     *                                                         *
-                     **********************************************************/
+                     * Comportamento FIPA-RequestInitiator * *
+                     *********************************************************
+                     */
                     addBehaviour(new AchieveREInitiator(myAgent, msgFechaChave) {
-                        
                         /*
                          *  método handleInform()
                          * 
@@ -318,84 +288,18 @@ public class AgenteDeTrecho extends Agent {
 
                 return msgRetorno;
             }//fim de handleSubscription
-        });//fim do comportamento FIPA-Subscribe
+        };//fim do comportamento FIPA-Subscribe
+
+
+        /**
+         * *********************************************************************
+         *
+         * Lançamento de Comportamentos Primários
+         *
+         *********************************************************************
+         */
+        addBehaviour(comportamentoDeRecomposicaoDeTrecho);
+        addBehaviour(comportamentoDeInicializacao);
 
     }//fim do método setup()
-
-    /**
-     * Método exibirMensagem
-     * 
-     * @param msg
-     */
-    public void exibirMensagem(ACLMessage msg) {
-
-        String conteudo = null;
-        boolean objeto = true;
-        Socket socket = null;
-        PrintStream ps =  null;
-        Locale locale = new Locale("pt","BR");
-        GregorianCalendar calendar = new GregorianCalendar();
-        SimpleDateFormat formatador = new SimpleDateFormat("dd' de 'MMMMM' de 'yyyy' - 'HH':'mm':'ss':'SS",locale);
-        
-        try {
-            
-            socket = new Socket("localhost", 7000);
-            ps = new PrintStream(socket.getOutputStream());
-            ps.println("mensagem enviada de "+msg.getSender().getLocalName()+" para "+this.getLocalName()+" em "+formatador.format(calendar.getTime()));
-            ps.println("quit");
-        } catch (Exception e) {
-            
-        }
-
-        try {
-            Element elemento = (Element) msg.getContentObject();
-            conteudo = elemento.getName();
-        } catch (UnreadableException e) {
-            objeto = false;
-        }
-
-        if (objeto) {
-            System.out.println("\n\n===============<<MENSAGEM>>================\n"
-                    + "De: " + msg.getSender() + "\n"
-                    + "Para: " + this.getName() + "\n"
-                    + "Conteudo: Banco de Dados " + conteudo + "\n"
-                    + "===========================================");
-        } else {
-            System.out.println("\n\n===============<<MENSAGEM>>================\n"
-                    + "De: " + msg.getSender() + "\n"
-                    + "Para: " + this.getName() + "\n"
-                    + "Conteudo: " + msg.getContent() + "\n"
-                    + "===========================================");
-        }
-
-    }//fim do método exibirMenssagem
-
-    /**
-     * Método carregarBD
-     * 
-     * @param nomeAgente
-     * @return agenteBD
-     */
-    public Element carregarBD(String nomeAgente) {
-
-        File file = null;
-        SAXBuilder builder = null;
-        Document doc = null;
-        Element agenteBD = null;
-
-        file = new File("src/xml/" + nomeAgente + ".xml");
-        builder = new SAXBuilder();
-
-        try {
-            doc = builder.build(file);
-        } catch (JDOMException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }//fim do try
-
-        agenteBD = doc.getRootElement();
-        return agenteBD;
-
-    }//fim do método carregarBD
 }//fim da Classe AgenteDeTrecho

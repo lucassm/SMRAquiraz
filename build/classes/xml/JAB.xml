@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<agenteAA nome="JAB">
+	
+	<agentesAS>
+		<AQZ/>
+		<MSJ/>
+		<AGF/>
+	</agentesAS>
+	
+	<agentesAA>
+		<JAB1/>
+	</agentesAA>
+	
+	<agentesAT>
+	</agentesAT>
+	
+	<agentesAE>
+		<CH14/>
+	</agentesAE>
+	
+</agenteAA>

@@ -82,7 +82,7 @@ public class DialogConfig extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(jList1);
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Agentes de Alimentador"));
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Alimentadores Associados"));
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -109,7 +109,7 @@ public class DialogConfig extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 455, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -120,23 +120,23 @@ public class DialogConfig extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Agentes de Trecho"));
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Trecho Associados"));
 
         jTable2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "Nome", "Codigo", "carregamento", "carreg. max."
+                "Nome", "carreg. max.", "carregamento", "clientes", "eletrodependentes", "carga Prioritaria"
             }
         ));
         jScrollPane4.setViewportView(jTable2);
@@ -158,7 +158,7 @@ public class DialogConfig extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Agentes de Equipamento"));
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Equipamentos Associados"));
 
         jTable3.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -299,9 +299,11 @@ public class DialogConfig extends javax.swing.JFrame {
 
         for (int i = 0; i < agentesAT.size(); i++) {
             Element agenteAT = (Element) agentesAT.get(i);
-            agenteAT.setAttribute("codigo", model2.getValueAt(i, 1).toString());
+            agenteAT.setAttribute("carregamentoMaximo", model2.getValueAt(i, 1).toString());
             agenteAT.setAttribute("carregamento", model2.getValueAt(i, 2).toString());
-            agenteAT.setAttribute("carregamentoMaximo", model2.getValueAt(i, 3).toString());
+            agenteAT.setAttribute("clientes", model2.getValueAt(i, 3).toString());
+            agenteAT.setAttribute("eletrodependentes", model2.getValueAt(i, 4).toString());
+            agenteAT.setAttribute("cargaImportante", model2.getValueAt(i, 5).toString());
         }
 
         List agentesAE = xmlElement.getChild("agentesAE").getChildren();
@@ -382,9 +384,11 @@ public class DialogConfig extends javax.swing.JFrame {
         for (int i = 0; i < agentesTrecho.size(); i++) {
             Element agenteTrecho = (Element) agentesTrecho.get(i);
             modelo.setValueAt(agenteTrecho.getName(), i, 0);
-            modelo.setValueAt(agenteTrecho.getAttributeValue("codigo"), i, 1);
+            modelo.setValueAt(agenteTrecho.getAttributeValue("carregamentoMaximo"), i, 1);
             modelo.setValueAt(agenteTrecho.getAttributeValue("carregamento"), i, 2);
-            modelo.setValueAt(agenteTrecho.getAttributeValue("carregamentoMaximo"), i, 3);
+            modelo.setValueAt(agenteTrecho.getAttributeValue("clientes"), i, 3);
+            modelo.setValueAt(agenteTrecho.getAttributeValue("eletrodependentes"), i, 4);
+            modelo.setValueAt(agenteTrecho.getAttributeValue("cargaImportante"), i, 5);
         }
 
         List agentesEquipamento = (List) xmlElement.getChild("agentesAE").getChildren();

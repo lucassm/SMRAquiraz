@@ -14,6 +14,7 @@ import model.LancaWidgets;
 import model.LimpaGrafico;
 import model.SimulaCurto;
 import model.SimulaPerdaSE;
+import model.Simulacao;
 import org.openide.util.Exceptions;
 
 /**
@@ -27,11 +28,13 @@ public class FramePrincipal extends javax.swing.JFrame {
     DialogSimulaCurto dialogSimulaCurto;
     DialogConfig dialogConfig;
     SimulaCurto simulaCurto;
+    Simulacao simulacao;
     SimulaPerdaSE simulaPerdaSE;
     LimpaGrafico limpaGrafico;
     AtualizaAgentes atualizaAgentes;
     DialogSimulaPerdaSE dialogSimulaPerdaSE;
-    
+    DialogSimulacao dialogSimulacao;
+
     public FramePrincipal() {
 
         initComponents();
@@ -43,15 +46,19 @@ public class FramePrincipal extends javax.swing.JFrame {
         lancaAgentes = new LancaAgentes();
 
         simulaCurto = new SimulaCurto(lancaWidgets.getGrafico(), lancaAgentes);
-        
+
+        simulacao = new Simulacao(lancaWidgets.getGrafico(), lancaAgentes);
+
         simulaPerdaSE = new SimulaPerdaSE(lancaAgentes);
 
-        limpaGrafico = new LimpaGrafico(simulaCurto, lancaWidgets.getChavesVector());
+        limpaGrafico = new LimpaGrafico(simulacao, lancaWidgets.getChavesVector(), lancaWidgets.estadoChavesVector);
 
         dialogSimulaCurto = new DialogSimulaCurto(lancaWidgets.getGrafico(), simulaCurto);
 
+        dialogSimulacao = new DialogSimulacao(lancaWidgets.getGrafico(), simulacao);
+
         dialogConfig = new DialogConfig();
-        
+
         dialogSimulaPerdaSE = new DialogSimulaPerdaSE(simulaPerdaSE);
 
     }
@@ -63,7 +70,6 @@ public class FramePrincipal extends javax.swing.JFrame {
         botaoLancaAgentes = new javax.swing.JButton();
         botaoSimulaCurto = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
         jButton7 = new javax.swing.JButton();
@@ -98,7 +104,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         jToolBar1.add(botaoLancaAgentes);
 
         botaoSimulaCurto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/simula_curto.png"))); // NOI18N
-        botaoSimulaCurto.setToolTipText("Simular Curto-circuito");
+        botaoSimulaCurto.setToolTipText("Simular Atuação da Proteção");
         botaoSimulaCurto.setFocusable(false);
         botaoSimulaCurto.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         botaoSimulaCurto.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -110,7 +116,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         jToolBar1.add(botaoSimulaCurto);
 
         jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/simula_perda_se.png"))); // NOI18N
-        jButton3.setToolTipText("Simular Perda de SE");
+        jButton3.setToolTipText("Terminar Agentes");
         jButton3.setFocusable(false);
         jButton3.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton3.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -120,13 +126,6 @@ public class FramePrincipal extends javax.swing.JFrame {
             }
         });
         jToolBar1.add(jButton3);
-
-        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/termina_agentes.png"))); // NOI18N
-        jButton4.setToolTipText("Terminar Agentes");
-        jButton4.setFocusable(false);
-        jButton4.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton4.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jToolBar1.add(jButton4);
 
         jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/visualisa_info.png"))); // NOI18N
         jButton5.setToolTipText("Visualizar Informções");
@@ -243,19 +242,17 @@ public class FramePrincipal extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(12, 12, 12)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1160, Short.MAX_VALUE))
-                    .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 1172, Short.MAX_VALUE))
+                .addGap(12, 12, 12)
+                .addComponent(jScrollPane1)
                 .addGap(24, 24, 24))
+            .addComponent(jToolBar1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 465, Short.MAX_VALUE)
+                .addComponent(jScrollPane1)
                 .addContainerGap())
         );
 
@@ -270,12 +267,11 @@ public class FramePrincipal extends javax.swing.JFrame {
 
     private void botaoSimulaCurtoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoSimulaCurtoActionPerformed
 
-        if (dialogSimulaCurto.isVisible()) {
+        if (dialogSimulacao.isVisible()) {
             //nada a fazer
         } else {
-            dialogSimulaCurto.setVisible(true);
+            dialogSimulacao.setVisible(true);
         }
-
     }//GEN-LAST:event_botaoSimulaCurtoActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
@@ -342,7 +338,6 @@ public class FramePrincipal extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
-
             public void run() {
                 new FramePrincipal().setVisible(true);
             }
@@ -355,7 +350,6 @@ public class FramePrincipal extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;

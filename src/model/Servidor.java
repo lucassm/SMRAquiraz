@@ -3,6 +3,7 @@ package model;
 import java.awt.Color;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -168,17 +169,17 @@ public class Servidor{
                 
                 for (int i = 0; i < chaveVector1.size(); i++) {
                     
-                    ImageWidget widget =  (ImageWidget) chaveVector1.get(i);
+                    SvgWidget widget =  (SvgWidget) chaveVector1.get(i);
                     
                     String[] parametros = s.split(" ");
                     String chave = parametros[0].replaceAll("_", "");
                     if (widget.getToolTipText().contains(chave)) {
                         if (parametros[1].contains("Abrir")) {
-                            widget.setImage(Utilities.loadImage("imagens/religadorNA.png"));
+                            widget.setSvgUri(new File("src/imagens/religadorNA.svg").toURI().toString());
                             break;
                             
                         }else if(parametros[1].contains("Fechar")){
-                            widget.setImage(Utilities.loadImage("imagens/religadorNF.png"));
+                            widget.setSvgUri(new File("src/imagens/religadorNF.svg").toURI().toString());
                             break;
                             
                         }

@@ -22,7 +22,7 @@ import view.DialogFuncao51;
  */
 public class Chave {
 
-    public ImageWidget widget;
+    public SvgWidget widget;
     public String feeder;
     public String manufacturer;
     public ComponenteGrafico componenteGrafico;
@@ -31,7 +31,8 @@ public class Chave {
 
     public Chave(final String name, final Graficos grafico, String way, String tipo, Point position) {
 
-        widget = grafico.createImageWidget(way, "<html><b>" + name + "</b></html>", position);
+        widget = grafico.createSvgWidget(way, "<html><b>" + name + "</b></html>", position);
+        widget.addChild(new LODWidget(widget.getScene(), 5, 0.1, name));
 
 
         if (tipo.equalsIgnoreCase("alimentador")) {

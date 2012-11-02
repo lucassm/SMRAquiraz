@@ -13,10 +13,10 @@ import org.netbeans.api.visual.widget.ImageWidget;
  */
 public class Barra {
     
-    public ImageWidget widget;
+    public SvgWidget widget;
     
     public Barra(String name, Graficos grafico, String way, Point position){
-        widget = grafico.createImageWidget(way, name, position);
+        widget = grafico.createSvgWidget(way, name, position);
         //graph.createHoverAction(widget);
     }
     

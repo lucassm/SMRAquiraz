@@ -60,7 +60,6 @@ public class Grafico{
         chart.setBackgroundPaint(Color.white);
         
         XYPlot plot = (XYPlot) chart.getPlot();
-
         NumberAxis xAxis = new LogarithmicAxis("Múltiplo (Icc/Ipickup)");
         xAxis.setAutoRange(true);
         NumberAxis yAxis = new LogarithmicAxis("Tempo (s)");

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package model;
 
 import java.io.BufferedReader;
@@ -25,17 +21,17 @@ import view.DialogVisualisarLogs;
  *
  * @author lucas
  */
-public class CapturaLog extends Thread{
+public class CapturaLog extends Thread {
 
     DialogVisualisarLogs janela;
-    
+
     public CapturaLog() {
         janela = new DialogVisualisarLogs();
         janela.setVisible(true);
     }
-    
-    public void run(){
-                
+
+    public void run() {
+
         //Declara o ServerSocket
         ServerSocket serv = null;
 
@@ -52,29 +48,28 @@ public class CapturaLog extends Thread{
         }
 
         while (true) {
-            
+
             try {
                 //Aguarda uma conexão na porta especificada e cria retorna o socket que irá comunicar com o cliente
                 s = serv.accept();
                 //Cria um BufferedReader para o canal da stream de entrada de dados do socket s
                 entrada = new BufferedReader(new InputStreamReader(s.getInputStream()));
-                
-                while (true) {                    
-                    
+
+                while (true) {
+
                     //Aguarda por algum dado e imprime a linha recebida quando recebe
                     String msg = entrada.readLine();
                     if (msg.equalsIgnoreCase("quit")) {
                         s.close();
-                    }else{
-                                                
+                    } else {
                         DefaultListModel model = new DefaultListModel();
                         JList lista = janela.getjList1();
                         model = (DefaultListModel) lista.getModel();
                         model.addElement(msg);
                     }
-                    
+
                 }//fim do while()
-                
+
                 //trata possíveis excessões de input/output. Note que as excessões são as mesmas utilizadas para as classes de java.io
             } catch (IOException e) {
 
@@ -84,7 +79,4 @@ public class CapturaLog extends Thread{
             }
         }//fim do while()
     }
-
-
-    
 }//fim da classe CapturaLog

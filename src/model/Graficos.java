@@ -5,6 +5,7 @@
 package model;
 
 import java.awt.Point;
+import java.io.IOException;
 import javax.swing.JComponent;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.WidgetAction;
@@ -13,6 +14,7 @@ import org.netbeans.api.visual.widget.LabelWidget;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
+import org.openide.util.Exceptions;
 import org.openide.util.Utilities;
 
 /**
@@ -59,6 +61,22 @@ public class Graficos {
         }
         
         return w;
+    }
+    
+    public SvgWidget createSvgWidget(String location, String tooltip,  Point position){
+        
+        SvgWidget svgWidget = null;
+        
+        try {
+            svgWidget = new SvgWidget(scene, location);
+            svgWidget.setPreferredLocation(position);
+            svgWidget.setToolTipText(tooltip);
+            mainLayer.addChild(svgWidget);
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        
+        return svgWidget;
     }
 
     public JComponent createView() {

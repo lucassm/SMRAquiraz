@@ -18,7 +18,7 @@ import org.openide.util.Exceptions;
 public class AtualizaAgentes {
 
     String mensagem = null;
-    String[] agentes = {"AQZ1", "AQZ2", "AQZ3", "AQZ4"};
+    String[] agentes = {"AQZ1", "AQZ2", "AQZ3", "AQZ4", "JAB1", "MSJ1", "AGF1"};
     JOptionPane janela = null;
     Socket cliente = null;
 

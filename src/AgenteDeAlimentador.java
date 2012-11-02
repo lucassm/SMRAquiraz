@@ -14,13 +14,13 @@
 // 
 // Você deve ter recebido uma cópia da Licença Pública Geral GNU
 // junto com este programa, se não, acesse <http://www.gnu.org/licenses/>
- 
 
 /*****************************************************
  **
  **			AGENTE DE ALIMENTADOR
  ** 
  *****************************************************/
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
@@ -52,6 +52,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
+import model.Funcionalidades;
+import org.openide.util.Exceptions;
 
 public class AgenteDeAlimentador extends Agent {
 
@@ -61,14 +63,20 @@ public class AgenteDeAlimentador extends Agent {
             MessageTemplate.MatchPerformative(ACLMessage.CFP));
     public MessageTemplate filtro3 = MessageTemplate.and(MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_SUBSCRIBE), MessageTemplate.MatchPerformative(ACLMessage.SUBSCRIBE));
     public MessageTemplate filtro4 = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.REQUEST), MessageTemplate.MatchContent("atualizar"));
+    public MessageTemplate filtro5 = MessageTemplate.and(MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST), MessageTemplate.MatchEncoding("modificaBD"));
+    public MessageTemplate filtro6 = MessageTemplate.and(MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST), MessageTemplate.MatchEncoding("solicitaBD"));
     public AID melhorPropositor = null;
+    public ACLMessage cfpMessage = null;
     public OneShotBehaviour comportamentoDeInicializacao = null;
+    public OneShotBehaviour comportamentoDePrioridade = null;
     public ContractNetInitiator protocoloContractNetInitiator = null;
     public ContractNetResponder protocoloContractNetResponder = null;
     public SubscriptionInitiator protocoloSubscriptionInitiator = null;
     public SubscriptionResponder protocoloSubscriptionResponder = null;
     public AchieveREResponder protocoloAchieveREResponder = null;
     public AchieveREResponder protocoloAchieveREResponder2 = null;
+    public AchieveREResponder comportamentoModificaBD = null;
+    public AchieveREResponder comportamentoSolicitaBD = null;
     public TickerBehaviour comportamentoTemporal100ms = null;
     public TickerBehaviour comportamentoTemporal1minuto = null;
     public double corrente = 0;
@@ -76,11 +84,14 @@ public class AgenteDeAlimentador extends Agent {
     public int cont = 0;
     public int cont2 = 0;
     public Element agenteAlimentadorBD = null;
+    public Element agenteAlimentadorBDAux = null;
     public String horario = null;
+    public Funcionalidades funcionalidades = null;
+    
 
     public void setup() {
-        
-        
+
+
         /***********************************************************************
          *                                                                     *
          *          Comportamento OneShot de Inicialização do agente           * 
@@ -90,9 +101,70 @@ public class AgenteDeAlimentador extends Agent {
 
             @Override
             public void action() {
-                
-                agenteAlimentadorBD = carregarBD(myAgent.getLocalName());
-                System.out.println("Banco de Dados "+myAgent.getLocalName()+" carregado.");
+
+                funcionalidades = new Funcionalidades(myAgent);
+                agenteAlimentadorBD = funcionalidades.carregarBD(myAgent.getLocalName());
+            }
+        };
+
+        /***********************************************************************
+         *                                                                     *
+         *          Comportamento OneShot de Prioridade                        * 
+         *                                                                     * 
+         **********************************************************************/
+        comportamentoDePrioridade = new OneShotBehaviour(this) {
+
+            @Override
+            public void action() {
+
+                protocoloContractNetInitiator.reset(cfpMessage);
+            }
+        };
+
+        /***********************************************************************
+         *                                                                     *
+         *          Comportamento Modificação do Banco de Dados                * 
+         *                                                                     * 
+         **********************************************************************/
+        comportamentoModificaBD = new AchieveREResponder(this, filtro5) {
+
+            public ACLMessage handleRequest(ACLMessage request) {
+
+                try {
+                    agenteAlimentadorBD = (Element) request.getContentObject();
+                } catch (UnreadableException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+
+                System.out.println("Corrente Disponivel Recebida: " + agenteAlimentadorBD.getChild("correnteDisponivel").getAttributeValue("valor"));
+
+                ACLMessage inform = request.createReply();
+                inform.setPerformative(ACLMessage.INFORM);
+                inform.setContent("BD Modificado");
+                return inform;
+            }
+        };
+
+
+        /***********************************************************************
+         *                                                                     *
+         *          Comportamento Solicitação do Banco de Dados                * 
+         *                                                                     * 
+         **********************************************************************/
+        comportamentoSolicitaBD = new AchieveREResponder(this, filtro6) {
+
+            public ACLMessage handleRequest(ACLMessage request) {
+
+                ACLMessage inform = request.createReply();
+                inform.setPerformative(ACLMessage.INFORM);
+
+                try {
+                    inform.setContentObject(agenteAlimentadorBD);
+                } catch (IOException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+
+                return inform;
             }
         };
 
@@ -112,7 +184,7 @@ public class AgenteDeAlimentador extends Agent {
              */
             protected void handlePropose(ACLMessage propose, Vector v) {
 
-                exibirMensagem(propose);
+                funcionalidades.exibirMensagem(propose);
             }
 
             /**
@@ -123,7 +195,7 @@ public class AgenteDeAlimentador extends Agent {
              */
             protected void handleRefuse(ACLMessage refuse) {
 
-                exibirMensagem(refuse);
+                funcionalidades.exibirMensagem(refuse);
             }
 
             /**
@@ -136,11 +208,14 @@ public class AgenteDeAlimentador extends Agent {
              */
             protected void handleAllResponses(Vector respostas, Vector aceitas) {
 
+                melhorPropositor = null;
+                maxCorrente = 0;
                 Enumeration e1 = respostas.elements();
                 float correnteNecessaria = 0;
-                maxCorrente=0;
                 String agenteRecurso = null;
                 boolean mesmoAlimentador = false;
+
+
                 while (e1.hasMoreElements()) {
 
                     ACLMessage msg = (ACLMessage) e1.nextElement();
@@ -159,38 +234,505 @@ public class AgenteDeAlimentador extends Agent {
                         corrente = Float.parseFloat(agenteDeAlimentadorBD2.getChild("correnteDisponivel").getAttributeValue("valor"));
 
                         if (corrente >= correnteNecessaria) {
-                            if(agenteDeAlimentadorBD2.getAttributeValue("nome").contains("AQZ")){
+                            if (agenteDeAlimentadorBD2.getAttributeValue("nome").contains("AQZ")) {
                                 if (mesmoAlimentador) {
-                                    if (corrente>maxCorrente) {
+                                    if (corrente > maxCorrente) {
                                         maxCorrente = corrente;
                                         melhorPropositor = msg.getSender();
                                     }//fim do if (corrente>maxCorrente)
-                                }else{
+                                } else {
                                     maxCorrente = corrente;
                                     melhorPropositor = msg.getSender();
                                 }//fim do if (mesmoAlimentador)
-                                
-                                mesmoAlimentador=true;
-                                
-                            }else{
-                                if (corrente>maxCorrente && !mesmoAlimentador) {
+
+                                mesmoAlimentador = true;
+
+                            } else {
+                                if (corrente > maxCorrente && !mesmoAlimentador) {
                                     maxCorrente = corrente;
                                     melhorPropositor = msg.getSender();
                                 }//fim do if (corrente>maxCorrente && !mesmoAlimentador)
-                                
+
                             }//fim do if(agenteDeAlimentadorBD2.getAttributeValue("nome").contains("AQZ"))
 
                         }//fim do if(potencia>maxpotencia)
-                        
+
                     }//fim do if (msgPerformative != ACLMessage.REFUSE)
-                    
+
                 }//fim do while(e.hasMoreElements())
+
+                /*
+                 * Este If Verifica se nenhuma proposta foi aceita pelo agente
+                 * de Alimentador Solicitante.
+                 */
+                if (melhorPropositor == null) {
+
+                    Enumeration propostas = respostas.elements();
+                    Element agenteAABD = null;
+                    Element agenteAABDSelecionado = null;
+                    while (propostas.hasMoreElements()) {
+                        ACLMessage proposta = (ACLMessage) propostas.nextElement();
+                        try {
+                            agenteAABD = (Element) proposta.getContentObject();
+                        } catch (UnreadableException ex) {
+                            Exceptions.printStackTrace(ex);
+                        }
+
+                        List agentesAA = agenteAlimentadorBD.getChild("agentesAA").getChildren();
+
+                        for (int i = 0; i < agentesAA.size(); i++) {
+                            Element agenteAA = (Element) agentesAA.get(i);
+
+                            if (agenteAABD.getAttributeValue("estado").equalsIgnoreCase("recompondo")) {
+                                agenteAABDSelecionado = agenteAABD;
+                                break;
+                            }
+                        }//fim do for()
+
+                    }//fim do while()
+
+                    /*
+                     * Este If verifica se algum dos agentes propositores estão
+                     * Recompondo algum trecho.
+                     */
+                    if (agenteAABDSelecionado != null) {
+
+
+                        String tipoDePrioridade = agenteAlimentadorBD.getChild("prioridade").getAttributeValue("valor");
+
+                        /*
+                         * Este If seleciona o tipo de prioridade do sistema
+                         */
+                        if (tipoDePrioridade.equalsIgnoreCase("carga")) {
+
+                            double corrente1 = 0;
+                            double corrente2 = 0;
+                            List agentesAT1 = agenteAlimentadorBD.getChild("agentesAT").getChildren();
+                            for (int i = 0; i < agentesAT1.size(); i++) {
+
+                                Element agenteAT = (Element) agentesAT1.get(i);
+                                if (agenteAT.getAttributeValue("afetado").equalsIgnoreCase("sim")) {
+                                    corrente1 += Double.parseDouble(agenteAT.getAttributeValue("carregamento"));
+                                }
+                            }
+                            
+                            if (corrente1 > corrente2) {
+
+                                String agenteRecomposto = agenteAABDSelecionado.getChild("agenteRecomposto").getAttributeValue("valor");
+                                Element agenteRecompostoBD = funcionalidades.carregarBD(agenteRecomposto);
+                                List agentesAE = agenteRecompostoBD.getChild("agentesAE").getChildren();
+
+                                //mensagem para abrir equipamentos chave
+                                ACLMessage msgAbreEquipamento = new ACLMessage(ACLMessage.REQUEST);
+                                msgAbreEquipamento.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
+                                msgAbreEquipamento.setContent("Abrir");
+
+                                for (int i = 0; i < agentesAE.size(); i++) {
+                                    Element agenteAE = (Element) agentesAE.get(i);
+
+                                    if (agenteAE.getAttributeValue("tipo").equalsIgnoreCase("encontro")) {
+                                        msgAbreEquipamento.addReceiver(new AID(agenteAE.getName(), AID.ISLOCALNAME));
+                                    }
+                                }
+
+                                /***************************************************************
+                                 * 
+                                 * Comportamento FIPA-Request Iniciante para abrir chaves
+                                 * 
+                                 **************************************************************/
+                                addBehaviour(new AchieveREInitiator(myAgent, msgAbreEquipamento) {
+
+                                    protected void handleInform(ACLMessage inform) {
+
+                                        funcionalidades.exibirMensagem(inform);
+                                        //agenteAlimentadorBDAux.getChild("agentesAE").getChild(inform.getSender().getLocalName()).setAttribute("estado", "aberto");
+                                    }
+                                });//fim do protocolo FIPA-Request Iniciante para abrir chaves
+
+                                double correnteCedida = Double.parseDouble(agenteAABDSelecionado.getChild("correnteCedida").getAttributeValue("valor"));
+
+                                double correnteDisponivel = Double.parseDouble(agenteAABDSelecionado.getChild("correnteDisponivel").getAttributeValue("valor"));
+
+                                agenteAABDSelecionado.getChild("correnteDisponivel").setAttribute("valor", String.valueOf(correnteCedida + correnteDisponivel));
+
+                                ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
+                                msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
+                                msg.setEncoding("modificaBD");
+                                msg.addReceiver(new AID(agenteAABDSelecionado.getAttributeValue("nome"), AID.ISLOCALNAME));
+
+                                try {
+                                    msg.setContentObject(agenteAABDSelecionado);
+                                } catch (IOException ex) {
+                                    Exceptions.printStackTrace(ex);
+                                }
+
+                                addBehaviour(new AchieveREInitiator(myAgent, msg) {
+
+                                    @Override
+                                    protected void handleInform(ACLMessage inform) {
+                                        super.handleInform(inform);
+                                    }
+                                });
+
+                                addBehaviour(comportamentoDePrioridade);
+                            }//fim do if (corrente1>corrente2)
+
+                        } else if (tipoDePrioridade.equalsIgnoreCase("clientes")) {
+
+                            double clientes1 = 0;
+                            double clientes2 = 0;
+                            List agentesAT1 = agenteAlimentadorBD.getChild("agentesAT").getChildren();
+
+                            for (int i = 0; i < agentesAT1.size(); i++) {
+
+                                Element agenteAT = (Element) agentesAT1.get(i);
+                                if (agenteAT.getAttributeValue("afetado").equalsIgnoreCase("sim")) {
+                                    clientes1 += Double.parseDouble(agenteAT.getAttributeValue("clientes"));
+                                }
+                            }
+
+                            ACLMessage msgSolicitaBD = new ACLMessage(ACLMessage.REQUEST);
+                            msgSolicitaBD.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
+                            msgSolicitaBD.setEncoding("solicitaBD");
+                            msgSolicitaBD.addReceiver(new AID(agenteAABDSelecionado.getChild("agenteRecomposto").getAttributeValue("nome"), AID.ISLOCALNAME));
+                            msgSolicitaBD.setContent("solicitaBD");
+
+                            addBehaviour(new AchieveREInitiator(myAgent, msgSolicitaBD) {
+
+                                @Override
+                                protected void handleInform(ACLMessage inform) {
+
+                                    try {
+                                        agenteAlimentadorBDAux = (Element) inform.getContentObject();
+                                        agenteAlimentadorBDAux.getAttributeValue("nome");
+                                    } catch (UnreadableException ex) {
+                                        Exceptions.printStackTrace(ex);
+                                    }
+                                }
+                            });
+
+                            if (agenteAlimentadorBDAux.getAttributeValue("nome").equalsIgnoreCase(agenteAABDSelecionado.getChild("agenteRecomposto").getAttributeValue("nome"))) {
+                                
+                                List agentesAT2 = agenteAlimentadorBDAux.getChild("agentesAT").getChildren();
+
+                                for (int i = 0; i < agentesAT2.size(); i++) {
+
+                                    Element agenteAT = (Element) agentesAT2.get(i);
+
+                                    if (agenteAT.getAttributeValue("afetado").equalsIgnoreCase("sim")) {
+                                        clientes2 += Double.parseDouble(agenteAT.getAttributeValue("clientes"));
+                                    }
+                                }
+
+                                if (clientes1 > clientes2) {
+
+                                    //mensagem para abrir equipamentos chave
+                                    ACLMessage msgAbreEquipamento = new ACLMessage(ACLMessage.REQUEST);
+                                    msgAbreEquipamento.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
+                                    msgAbreEquipamento.setContent("Abrir");
+
+                                    List agentesAE = agenteAlimentadorBDAux.getChild("agentesAE").getChildren();
+
+                                    for (int i = 0; i < agentesAE.size(); i++) {
+                                        Element agenteAE = (Element) agentesAE.get(i);
+
+                                        if (agenteAE.getAttributeValue("tipo").equalsIgnoreCase("encontro")) {
+                                            msgAbreEquipamento.addReceiver(new AID(agenteAE.getName(), AID.ISLOCALNAME));
+                                        }
+                                    }
+
+                                    /***************************************************************
+                                     * 
+                                     * Comportamento FIPA-Request Iniciante para abrir chaves
+                                     * 
+                                     **************************************************************/
+                                    addBehaviour(new AchieveREInitiator(myAgent, msgAbreEquipamento) {
+
+                                        protected void handleInform(ACLMessage inform) {
+
+                                            funcionalidades.exibirMensagem(inform);
+                                            //agenteAlimentadorBDAux.getChild("agentesAE").getChild(inform.getSender().getLocalName()).setAttribute("estado", "aberto");
+                                        }
+                                    });//fim do protocolo FIPA-Request Iniciante para abrir chaves
+
+                                    System.out.println(agenteAABDSelecionado.getAttributeValue("nome"));
+                                    System.out.println(agenteAABDSelecionado.getChild("correnteCedida").getAttributeValue("valor"));
+                                    double correnteCedida = Double.parseDouble(agenteAABDSelecionado.getChild("correnteCedida").getAttributeValue("valor"));
+                                    
+                                    double correnteDisponivel = Double.parseDouble(agenteAABDSelecionado.getChild("correnteDisponivel").getAttributeValue("valor"));
+                                    System.out.println("Corrente Disponivel: " + String.valueOf(correnteCedida + correnteDisponivel));
+
+                                    agenteAABDSelecionado.getChild("correnteDisponivel").setAttribute("valor", String.valueOf(correnteCedida + correnteDisponivel));
+
+                                    ACLMessage msgAtualizaBD = new ACLMessage(ACLMessage.REQUEST);
+                                    msgAtualizaBD.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
+                                    msgAtualizaBD.setEncoding("modificaBD");
+                                    msgAtualizaBD.addReceiver(new AID(agenteAABDSelecionado.getAttributeValue("nome"), AID.ISLOCALNAME));
+
+                                    try {
+                                        msgAtualizaBD.setContentObject(agenteAABDSelecionado);
+                                    } catch (IOException ex) {
+                                        Exceptions.printStackTrace(ex);
+                                    }
+
+                                    addBehaviour(new AchieveREInitiator(myAgent, msgAtualizaBD) {
+
+                                        @Override
+                                        protected void handleInform(ACLMessage inform) {
+                                            super.handleInform(inform);
+                                        }
+                                    });
+
+                                    addBehaviour(comportamentoDePrioridade);
+                                    
+                                }//fim do if(clientes1>clientes2)
+
+                            } else {
+                                addBehaviour(comportamentoDePrioridade);
+                            }
+                            //fim da prioridade de clientes
+                        }else if(tipoDePrioridade.equalsIgnoreCase("Cargas Prioritaria")){
+                            
+                            double cargas1 = 0;
+                            double cargas2 = 0;
+                            
+                            List agentesAT1 = agenteAlimentadorBD.getChild("agentesAT").getChildren();
+
+                            for (int i = 0; i < agentesAT1.size(); i++) {
+
+                                Element agenteAT = (Element) agentesAT1.get(i);
+                                if (agenteAT.getAttributeValue("afetado").equalsIgnoreCase("sim")) {
+                                    cargas1 += Double.parseDouble(agenteAT.getAttributeValue("cargaImportante"));
+                                }
+                            }
+
+                            ACLMessage msgSolicitaBD = new ACLMessage(ACLMessage.REQUEST);
+                            msgSolicitaBD.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
+                            msgSolicitaBD.setEncoding("solicitaBD");
+                            msgSolicitaBD.addReceiver(new AID(agenteAABDSelecionado.getChild("agenteRecomposto").getAttributeValue("nome"), AID.ISLOCALNAME));
+                            msgSolicitaBD.setContent("solicitaBD");
+
+                            addBehaviour(new AchieveREInitiator(myAgent, msgSolicitaBD) {
+
+                                @Override
+                                protected void handleInform(ACLMessage inform) {
+
+                                    try {
+                                        agenteAlimentadorBDAux = (Element) inform.getContentObject();
+                                        agenteAlimentadorBDAux.getAttributeValue("nome");
+                                    } catch (UnreadableException ex) {
+                                        Exceptions.printStackTrace(ex);
+                                    }
+                                }
+                            });
+
+                            if (agenteAlimentadorBDAux.getAttributeValue("nome").equalsIgnoreCase(agenteAABDSelecionado.getChild("agenteRecomposto").getAttributeValue("nome"))) {
+                                
+                                List agentesAT2 = agenteAlimentadorBDAux.getChild("agentesAT").getChildren();
+
+                                for (int i = 0; i < agentesAT2.size(); i++) {
+
+                                    Element agenteAT = (Element) agentesAT2.get(i);
+
+                                    if (agenteAT.getAttributeValue("afetado").equalsIgnoreCase("sim")) {
+                                        cargas2 += Double.parseDouble(agenteAT.getAttributeValue("cargaImportante"));
+                                    }
+                                }
+
+                                if (cargas1 > cargas2) {
+
+                                    //mensagem para abrir equipamentos chave
+                                    ACLMessage msgAbreEquipamento = new ACLMessage(ACLMessage.REQUEST);
+                                    msgAbreEquipamento.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
+                                    msgAbreEquipamento.setContent("Abrir");
+
+                                    List agentesAE = agenteAlimentadorBDAux.getChild("agentesAE").getChildren();
+
+                                    for (int i = 0; i < agentesAE.size(); i++) {
+                                        Element agenteAE = (Element) agentesAE.get(i);
+
+                                        if (agenteAE.getAttributeValue("tipo").equalsIgnoreCase("encontro")) {
+                                            msgAbreEquipamento.addReceiver(new AID(agenteAE.getName(), AID.ISLOCALNAME));
+                                        }
+                                    }
+
+                                    /***************************************************************
+                                     * 
+                                     * Comportamento FIPA-Request Iniciante para abrir chaves
+                                     * 
+                                     **************************************************************/
+                                    addBehaviour(new AchieveREInitiator(myAgent, msgAbreEquipamento) {
+
+                                        protected void handleInform(ACLMessage inform) {
+
+                                            funcionalidades.exibirMensagem(inform);
+                                            //agenteAlimentadorBDAux.getChild("agentesAE").getChild(inform.getSender().getLocalName()).setAttribute("estado", "aberto");
+                                        }
+                                    });//fim do protocolo FIPA-Request Iniciante para abrir chaves
+
+                                    System.out.println(agenteAABDSelecionado.getAttributeValue("nome"));
+                                    System.out.println(agenteAABDSelecionado.getChild("correnteCedida").getAttributeValue("valor"));
+                                    double correnteCedida = Double.parseDouble(agenteAABDSelecionado.getChild("correnteCedida").getAttributeValue("valor"));
+                                    
+                                    double correnteDisponivel = Double.parseDouble(agenteAABDSelecionado.getChild("correnteDisponivel").getAttributeValue("valor"));
+                                    System.out.println("Corrente Disponivel: " + String.valueOf(correnteCedida + correnteDisponivel));
+
+                                    agenteAABDSelecionado.getChild("correnteDisponivel").setAttribute("valor", String.valueOf(correnteCedida + correnteDisponivel));
+
+                                    ACLMessage msgAtualizaBD = new ACLMessage(ACLMessage.REQUEST);
+                                    msgAtualizaBD.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
+                                    msgAtualizaBD.setEncoding("modificaBD");
+                                    msgAtualizaBD.addReceiver(new AID(agenteAABDSelecionado.getAttributeValue("nome"), AID.ISLOCALNAME));
+
+                                    try {
+                                        msgAtualizaBD.setContentObject(agenteAABDSelecionado);
+                                    } catch (IOException ex) {
+                                        Exceptions.printStackTrace(ex);
+                                    }
+
+                                    addBehaviour(new AchieveREInitiator(myAgent, msgAtualizaBD) {
+
+                                        @Override
+                                        protected void handleInform(ACLMessage inform) {
+                                            super.handleInform(inform);
+                                        }
+                                    });
+
+                                    addBehaviour(comportamentoDePrioridade);
+                                    
+                                }//fim do if(cargas1>cargas2)
+
+                            } else {
+                                addBehaviour(comportamentoDePrioridade);
+                            }
+                            //fim da prioridade de cargas Prioritárias
+                            
+                        }else if(tipoDePrioridade.equalsIgnoreCase("Eletrodependentes")){
+                            
+                            double eletro1 = 0;
+                            double eletro2 = 0;
+                            
+                            List agentesAT1 = agenteAlimentadorBD.getChild("agentesAT").getChildren();
+
+                            for (int i = 0; i < agentesAT1.size(); i++) {
+
+                                Element agenteAT = (Element) agentesAT1.get(i);
+                                if (agenteAT.getAttributeValue("afetado").equalsIgnoreCase("sim")) {
+                                    eletro1 += Double.parseDouble(agenteAT.getAttributeValue("eletrodependentes"));
+                                }
+                            }
+
+                            ACLMessage msgSolicitaBD = new ACLMessage(ACLMessage.REQUEST);
+                            msgSolicitaBD.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
+                            msgSolicitaBD.setEncoding("solicitaBD");
+                            msgSolicitaBD.addReceiver(new AID(agenteAABDSelecionado.getChild("agenteRecomposto").getAttributeValue("nome"), AID.ISLOCALNAME));
+                            msgSolicitaBD.setContent("solicitaBD");
+
+                            addBehaviour(new AchieveREInitiator(myAgent, msgSolicitaBD) {
+
+                                @Override
+                                protected void handleInform(ACLMessage inform) {
+
+                                    try {
+                                        agenteAlimentadorBDAux = (Element) inform.getContentObject();
+                                        agenteAlimentadorBDAux.getAttributeValue("nome");
+                                    } catch (UnreadableException ex) {
+                                        Exceptions.printStackTrace(ex);
+                                    }
+                                }
+                            });
+
+                            if (agenteAlimentadorBDAux.getAttributeValue("nome").equalsIgnoreCase(agenteAABDSelecionado.getChild("agenteRecomposto").getAttributeValue("nome"))) {
+                                
+                                List agentesAT2 = agenteAlimentadorBDAux.getChild("agentesAT").getChildren();
+
+                                for (int i = 0; i < agentesAT2.size(); i++) {
+
+                                    Element agenteAT = (Element) agentesAT2.get(i);
+
+                                    if (agenteAT.getAttributeValue("afetado").equalsIgnoreCase("sim")) {
+                                        eletro2 += Double.parseDouble(agenteAT.getAttributeValue("eletrodependentes"));
+                                    }
+                                }
+
+                                if (eletro1 > eletro2) {
+
+                                    //mensagem para abrir equipamentos chave
+                                    ACLMessage msgAbreEquipamento = new ACLMessage(ACLMessage.REQUEST);
+                                    msgAbreEquipamento.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
+                                    msgAbreEquipamento.setContent("Abrir");
+
+                                    List agentesAE = agenteAlimentadorBDAux.getChild("agentesAE").getChildren();
+
+                                    for (int i = 0; i < agentesAE.size(); i++) {
+                                        Element agenteAE = (Element) agentesAE.get(i);
+
+                                        if (agenteAE.getAttributeValue("tipo").equalsIgnoreCase("encontro")) {
+                                            msgAbreEquipamento.addReceiver(new AID(agenteAE.getName(), AID.ISLOCALNAME));
+                                        }
+                                    }
+
+                                    /***************************************************************
+                                     * 
+                                     * Comportamento FIPA-Request Iniciante para abrir chaves
+                                     * 
+                                     **************************************************************/
+                                    addBehaviour(new AchieveREInitiator(myAgent, msgAbreEquipamento) {
+
+                                        protected void handleInform(ACLMessage inform) {
+
+                                            funcionalidades.exibirMensagem(inform);
+                                            //agenteAlimentadorBDAux.getChild("agentesAE").getChild(inform.getSender().getLocalName()).setAttribute("estado", "aberto");
+                                        }
+                                    });//fim do protocolo FIPA-Request Iniciante para abrir chaves
+
+                                    System.out.println(agenteAABDSelecionado.getAttributeValue("nome"));
+                                    System.out.println(agenteAABDSelecionado.getChild("correnteCedida").getAttributeValue("valor"));
+                                    double correnteCedida = Double.parseDouble(agenteAABDSelecionado.getChild("correnteCedida").getAttributeValue("valor"));
+                                    
+                                    double correnteDisponivel = Double.parseDouble(agenteAABDSelecionado.getChild("correnteDisponivel").getAttributeValue("valor"));
+                                    System.out.println("Corrente Disponivel: " + String.valueOf(correnteCedida + correnteDisponivel));
+
+                                    agenteAABDSelecionado.getChild("correnteDisponivel").setAttribute("valor", String.valueOf(correnteCedida + correnteDisponivel));
+
+                                    ACLMessage msgAtualizaBD = new ACLMessage(ACLMessage.REQUEST);
+                                    msgAtualizaBD.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
+                                    msgAtualizaBD.setEncoding("modificaBD");
+                                    msgAtualizaBD.addReceiver(new AID(agenteAABDSelecionado.getAttributeValue("nome"), AID.ISLOCALNAME));
+
+                                    try {
+                                        msgAtualizaBD.setContentObject(agenteAABDSelecionado);
+                                    } catch (IOException ex) {
+                                        Exceptions.printStackTrace(ex);
+                                    }
+
+                                    addBehaviour(new AchieveREInitiator(myAgent, msgAtualizaBD) {
+
+                                        @Override
+                                        protected void handleInform(ACLMessage inform) {
+                                            super.handleInform(inform);
+                                        }
+                                    });
+
+                                    addBehaviour(comportamentoDePrioridade);
+                                    
+                                }//fim do if(eletro1>eletro2)
+
+                            } else {
+                                addBehaviour(comportamentoDePrioridade);
+                            }
+                            //fim da prioridade de cargas Prioritárias
+                        }
+
+                    }//fim do if(agenteAABDSelecionado != null)
+
+                }//fim do if(melhorPropositor != null)
 
                 Enumeration e2 = respostas.elements();
                 while (e2.hasMoreElements()) {
                     ACLMessage msg = (ACLMessage) e2.nextElement();
                     if (msg.getPerformative() != ACLMessage.REFUSE) {
-                        
+
                         if (msg.getSender() == melhorPropositor) {
                             ACLMessage resposta = msg.createReply();
                             resposta.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
@@ -200,13 +742,14 @@ public class AgenteDeAlimentador extends Agent {
                             ACLMessage resposta = msg.createReply();
                             resposta.setPerformative(ACLMessage.REJECT_PROPOSAL);
                             resposta.setContent("Proposta Recusada");
+
                             aceitas.addElement(resposta);
                         }//fim do if(msg.getSender()==melhorPropositor)
-                    
+
                     }//fim do if (msg != REFUSE)
 
                 }//fim do while(e.hasMoreElements())
-            
+
             }//fim do Método handleAllResponses
 
             /**
@@ -219,7 +762,7 @@ public class AgenteDeAlimentador extends Agent {
              */
             protected void handleInform(final ACLMessage inform) {
 
-                exibirMensagem(inform);
+                funcionalidades.exibirMensagem(inform);
 
                 if (inform.getContent().equalsIgnoreCase("permissao")) {
 
@@ -264,7 +807,7 @@ public class AgenteDeAlimentador extends Agent {
          **********************************************************************/
         ACLMessage msgSubscribeACLMessage = new ACLMessage(ACLMessage.SUBSCRIBE);
         protocoloSubscriptionInitiator = new SubscriptionInitiator(this, msgSubscribeACLMessage) {
-            
+
             /**
              * Método handleInform
              * 
@@ -281,7 +824,7 @@ public class AgenteDeAlimentador extends Agent {
              */
             protected void handleInform(ACLMessage inform) {
 
-                exibirMensagem(inform);
+                funcionalidades.exibirMensagem(inform);
 
                 //atualiza o banco de dados Agente de Alimentador
                 try {
@@ -308,7 +851,7 @@ public class AgenteDeAlimentador extends Agent {
                 //atualiza o valor de corrente necessaria para o agente realizar a recomposição
                 double correnteNecessaria = Double.parseDouble(agenteAlimentadorBD.getChild("correnteNecessaria").getAttributeValue("valor"));
                 agenteAlimentadorBD.getChild("correnteNecessaria").setAttribute("valor", String.valueOf(correnteNecessaria - correnteUtilizada));
-                
+
                 //prepara a mensagem do tipo SUBSCRIBE a ser enviada ao próximo agente de trecho
                 ACLMessage msg = new ACLMessage(ACLMessage.SUBSCRIBE);
                 msg.setProtocol(FIPANames.InteractionProtocol.FIPA_SUBSCRIBE);
@@ -357,7 +900,7 @@ public class AgenteDeAlimentador extends Agent {
              */
             protected void handleAgree(ACLMessage agree) {
 
-                exibirMensagem(agree);
+                funcionalidades.exibirMensagem(agree);
             }
 
             /**
@@ -373,12 +916,12 @@ public class AgenteDeAlimentador extends Agent {
              */
             protected void handleRefuse(ACLMessage refuse) {
 
-                exibirMensagem(refuse);
+                funcionalidades.exibirMensagem(refuse);
 
 
                 ACLMessage msg = new ACLMessage(ACLMessage.CFP);
                 msg.setProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
-                msg.setContent("curto"+","+horario+","+agenteAlimentadorBD.getChild("correnteNecessaria").getAttributeValue("valor"));
+                msg.setContent("curto" + "," + horario + "," + agenteAlimentadorBD.getChild("correnteNecessaria").getAttributeValue("valor"));
 
                 List agentesAlimentadores = agenteAlimentadorBD.getChild("agentesAA").getChildren();
 
@@ -425,21 +968,24 @@ public class AgenteDeAlimentador extends Agent {
              * 
              */
             protected ACLMessage handleRequest(ACLMessage request) {
-                
+
                 atualizarBancoDeDados(request);
-                
+
                 horario = request.getContent().split(",")[1];
-                
+
                 ACLMessage msg = request.createReply();
                 msg.setPerformative(ACLMessage.INFORM);
                 msg.setContent("Pedido Recebido com sucesso");
 
-                String agenteSolicitante = request.getSender().getLocalName();
+                Element agenteEquipamentoBD = funcionalidades.carregarBD(request.getSender().getLocalName());
+                String trechoAfetado = agenteEquipamentoBD.getAttributeValue("agenteAT");
 
                 //Alterando estado do agente de Trecho para "defeituoso"
 
                 agenteAlimentadorBD.setAttribute("estado", "defeituoso");
-                agenteAlimentadorBD.getChild("agentesAT").getChild(agenteSolicitante).setAttribute("estado", "defeituoso");
+                agenteAlimentadorBD.getChild("agentesAT").getChild(trechoAfetado).setAttribute("estado", "defeituoso");
+
+                calculaAberturaDeChaves(myAgent, agenteAlimentadorBD);
 
                 List agentesTrecho = agenteAlimentadorBD.getChild("agentesAT").getChildren();
                 float cargaPerdida = 0;
@@ -448,8 +994,8 @@ public class AgenteDeAlimentador extends Agent {
 
                     Element agenteTrecho = (Element) agentesTrecho.get(i);
 
-                    if (!agenteTrecho.getAttributeValue("estado").equalsIgnoreCase("defeituoso")) {
-
+                    if (agenteTrecho.getAttributeValue("estado").equalsIgnoreCase("defeituoso") || agenteTrecho.getAttributeValue("afetado").equalsIgnoreCase("não")) {
+                    } else if (agenteTrecho.getAttributeValue("afetado").equalsIgnoreCase("sim")) {
                         cargaPerdida += Float.parseFloat(agenteTrecho.getAttributeValue("carregamento"));
                     }
                 }
@@ -459,80 +1005,23 @@ public class AgenteDeAlimentador extends Agent {
 
                 final List agentesEquipamento = agenteAlimentadorBD.getChild("agentesAE").getChildren();
 
-                //mensagem para abrir equipamentos chave
-                ACLMessage msg3 = new ACLMessage(ACLMessage.REQUEST);
-                msg3.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
-                msg3.setContent("Abrir");
-                
-                //mensagem para fechar equipamentos chave
-                ACLMessage msg4 = new ACLMessage(ACLMessage.REQUEST);
-                msg4.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
-                msg4.setContent("Fechar");
-                
-                String chave1 = agenteAlimentadorBD.getChild("agentesAT").getChild(agenteSolicitante).getAttributeValue("chave1");
-                String codigo = agenteAlimentadorBD.getChild("agentesAE").getChild(chave1).getAttributeValue("codigo");
-                int numcodigo = Integer.parseInt(codigo);
-                cont2=0;
-
-                for (int i = 0; i < agentesEquipamento.size(); i++) {
-
-                    Element element = (Element) agentesEquipamento.get(i);
-                    int numcodigo2 = Integer.parseInt(element.getAttributeValue("codigo"));
-                    if(numcodigo2>=numcodigo || element.getAttributeValue("tipo").equalsIgnoreCase("encontro")){
-                        cont2++;
-                        String destino = element.getName();
-                        msg3.addReceiver(new AID(destino, AID.ISLOCALNAME));
-                    }else{
-                        String destino = element.getName();
-                        msg4.addReceiver(new AID(destino, AID.ISLOCALNAME));
-                    }
-                }
-                
-                /***************************************************************
-                 * 
-                 * Comportamento FIPA-Request Iniciante para fechar chaves
-                 * 
-                 **************************************************************/
-                addBehaviour(new AchieveREInitiator(myAgent, msg4) {
-
-                    protected void handleInform(ACLMessage inform) {
-
-                        exibirMensagem(inform);
-                        agenteAlimentadorBD.getChild("agentesAE").getChild(inform.getSender().getLocalName()).setAttribute("estado", "fechado");
-                    }
-                });//fim do protocolo FIPA-Request Iniciante para fechar chaves
-
-                /***************************************************************
-                 * 
-                 * Comportamento FIPA-Request Iniciante para abrir chaves
-                 * 
-                 **************************************************************/
-                addBehaviour(new AchieveREInitiator(myAgent, msg3) {
-
-                    protected void handleInform(ACLMessage inform) {
-
-                        exibirMensagem(inform);
-                        agenteAlimentadorBD.getChild("agentesAE").getChild(inform.getSender().getLocalName()).setAttribute("estado", "aberto");
-                    }
-                });//fim do protocolo FIPA-Request Iniciante para abrir chaves
-                
                 List<Element> agentesRecurso = agenteAlimentadorBD.getChild("agentesAA").getChildren();
 
-                ACLMessage msg5 = new ACLMessage(ACLMessage.CFP);
-                msg5.setProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
-                msg5.setContent(request.getContent()+","+cargaPerdida1);
+                cfpMessage = new ACLMessage(ACLMessage.CFP);
+                cfpMessage.setProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
+                cfpMessage.setContent(request.getContent() + "," + cargaPerdida1);
 
                 //Adiciona agentes de alimentadores na lista de mensagens do protocolo ContractNetInitiator
                 for (int i = 0; i < agentesRecurso.size(); i++) {
 
                     Element element = (Element) agentesRecurso.get(i);
                     String destino = element.getName();
-                    msg5.addReceiver(new AID(destino, AID.ISLOCALNAME));
+                    cfpMessage.addReceiver(new AID(destino, AID.ISLOCALNAME));
                 }//fim do for
 
                 //Atualiza a mensagem de iniciação do protocolo ContractNetInitiator
-                protocoloContractNetInitiator.reset(msg5);
-                
+                protocoloContractNetInitiator.reset(cfpMessage);
+
                 //Este comportamento temporam verifica se todas as mensagens para abertura das chaves a jusante do cuto
                 //foram enviadas e se o estado das mesmas foi alterado para aberto, para que assim, a negociação possa
                 //ser iniciada.
@@ -548,7 +1037,6 @@ public class AgenteDeAlimentador extends Agent {
                                 cont += 1;
                             }
                         }
-                        System.out.println("cont = " + cont);
                         if (cont == cont2) {
                             addBehaviour(protocoloContractNetInitiator);
                             comportamentoTemporal100ms.stop();
@@ -561,14 +1049,14 @@ public class AgenteDeAlimentador extends Agent {
             }//fim do método handleRequest
         };//fim do comportamento AchieveREResponder
 
-        
+
         /***********************************************************************
          * 
          * Comportamento FIPA-ContractNetParticipante
          * 
          **********************************************************************/
         protocoloContractNetResponder = new ContractNetResponder(this, filtro2) {
-            
+
             /**
              * Método handleCfp
              * 
@@ -580,14 +1068,14 @@ public class AgenteDeAlimentador extends Agent {
              */
             protected ACLMessage handleCfp(ACLMessage cfp) {
 
-                exibirMensagem(cfp);
+                funcionalidades.exibirMensagem(cfp);
 
                 String[] dados = cfp.getContent().split(",");
                 horario = dados[1];
-                cfp.setContent(dados[0]+","+dados[1]);
+                cfp.setContent(dados[0] + "," + dados[1]);
                 atualizarBancoDeDados(cfp);
                 cfp.setContent(dados[2]);
-                
+
                 ACLMessage proposta = cfp.createReply();
                 proposta.setProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
                 System.out.println(agenteAlimentadorBD.getAttributeValue("estado"));
@@ -606,7 +1094,7 @@ public class AgenteDeAlimentador extends Agent {
 
                 return proposta;
             }
-            
+
             /**
              * 
              * Método handleAcceptProposal
@@ -620,14 +1108,19 @@ public class AgenteDeAlimentador extends Agent {
              */
             protected ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage proposta, ACLMessage aceita) {
 
-                exibirMensagem(aceita);
+                funcionalidades.exibirMensagem(aceita);
 
                 //Atualiza o banco de dados do agente de Alimentador subtraindo a corrente que foi cedida
                 //ao agente de Alimentador solicitante.
                 double correnteDiponivel = Double.parseDouble(agenteAlimentadorBD.getChild("correnteDisponivel").getAttributeValue("valor"));
                 double correnteCedida = Double.parseDouble(cfp.getContent());
+                System.out.println("Corrente Cedida");
+                System.out.println(correnteCedida);
 
                 agenteAlimentadorBD.getChild("correnteDisponivel").setAttribute("valor", String.valueOf(correnteDiponivel - correnteCedida));
+                agenteAlimentadorBD.getChild("correnteCedida").setAttribute("valor", String.valueOf(correnteCedida));
+                agenteAlimentadorBD.setAttribute("estado", "recompondo");
+                agenteAlimentadorBD.getChild("agenteRecomposto").setAttribute("nome", cfp.getSender().getLocalName());
 
                 //envia mensagem de confirmação para o agente solicitante
                 ACLMessage inform = aceita.createReply();
@@ -643,7 +1136,7 @@ public class AgenteDeAlimentador extends Agent {
          * 
          **********************************************************************/
         protocoloSubscriptionResponder = new SubscriptionResponder(this, filtro3) {
-            
+
             /*
              * Método handleSubscription
              * 
@@ -663,7 +1156,7 @@ public class AgenteDeAlimentador extends Agent {
                 msg4.setProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
 
                 atualizarBancoDeDados(subscribe);
-                
+
                 List agentesAT = agenteAlimentadorBD.getChild("agentesAT").getChildren();
                 double cargaPerdida = 0.0;
                 String cargaPerdida1 = null;
@@ -679,7 +1172,7 @@ public class AgenteDeAlimentador extends Agent {
                 agenteAlimentadorBD.getChild("correnteNecessaria").setAttribute("valor", cargaPerdida1);
 
 
-                msg4.setContent(subscribe.getContent()+","+cargaPerdida1);
+                msg4.setContent(subscribe.getContent() + "," + cargaPerdida1);
 
                 //Adiciona agentes de alimentadores na lista de mensagens do protocolo ContractNetInitiator
 
@@ -721,245 +1214,218 @@ public class AgenteDeAlimentador extends Agent {
             }
         };//fim do comportamento FIPA-SubscriptionResponder
 
-        
+
         /***********************************************************************
          * 
          * Comportamento FIPA-AchieveREResponder
          * 
          **********************************************************************/
-        protocoloAchieveREResponder2 = new AchieveREResponder(this, filtro4){
-            
-            protected ACLMessage handleRequest(ACLMessage request){
-                
-                exibirMensagem(request);
+        protocoloAchieveREResponder2 = new AchieveREResponder(this, filtro4) {
+
+            protected ACLMessage handleRequest(ACLMessage request) {
+
+                funcionalidades.exibirMensagem(request);
                 ACLMessage inform = request.createReply();
                 inform.setPerformative(ACLMessage.INFORM);
                 inform.setContent("mensagem recebida com sucesso");
-                
-                carregarBD(myAgent.getLocalName());
-                
+
+                funcionalidades.carregarBD(myAgent.getLocalName());
+
                 return inform;
             }
         };
-        
-//        /***********************************************************************
-//         * 
-//         * Comportamento TickerBehaviour
-//         * 
-//         **********************************************************************/
-//        comportamentoTemporal1minuto = new TickerBehaviour(this, 60000) {
-//            
-//            /*
-//             * Método onStart
-//             * 
-//             * Este método carrega o banco de dados XML assim que o agente é iniciado.
-//             * 
-//             */
-//            public void onStart() {
-//                agenteAlimentadorBD = carregarBD(myAgent.getLocalName());
-//            }
-//            
-//            /*
-//             * Método onTick
-//             * 
-//             * Este método atualiza o banco de dados a cada 1 min.
-//             * 
-//             */
-//            protected void onTick() {
-//                
-//                Locale locale = new Locale("pt","BR");
-//                
-//GregorianCalendar calendar = new GregorianCalendar();
-//                
-//SimpleDateFormat formatador = new SimpleDateFormat("dd' de 'MMMMM' de 'yyyy' - 'HH':'mm'h'",locale);
-//                
-//                if (agenteAlimentadorBD.getAttributeValue("estado").equalsIgnoreCase("null")) {
-//                    agenteAlimentadorBD = carregarBD(myAgent.getLocalName());
-//                    System.out.println("\nBanco de Dados " + myAgent.getLocalName() + " atualizado em:\n"+formatador.format(calendar.getTime()));
-//                }
-//
-//            }//fim do método onTick
-//        };
 
 
-        
+
         /***********************************************************************
          * 
          * Lançamentos de Comportamentos Primarios
          * 
          **********************************************************************/
         addBehaviour(comportamentoDeInicializacao);
+        addBehaviour(comportamentoModificaBD);
+        addBehaviour(comportamentoSolicitaBD);
         addBehaviour(protocoloAchieveREResponder);
         addBehaviour(protocoloContractNetResponder);
         addBehaviour(protocoloSubscriptionResponder);
         addBehaviour(protocoloAchieveREResponder2);
-//        addBehaviour(comportamentoTemporal1minuto);
 
 
     }//fim do método Setup
 
     /**
-     * Método exibirMensagem
-     * 
-     * @param msg
-     */
-    public void exibirMensagem(ACLMessage msg) {
-
-        String conteudo = null;
-        boolean objeto = true;
-        Socket socket = null;
-        PrintStream ps =  null;
-        Locale locale = new Locale("pt","BR");
-        GregorianCalendar calendar = new GregorianCalendar();
-        SimpleDateFormat formatador = new SimpleDateFormat("dd' de 'MMMMM' de 'yyyy' - 'HH':'mm':'ss':'SS",locale);
-        
-        try {
-            
-            socket = new Socket("localhost", 7000);
-            ps = new PrintStream(socket.getOutputStream());
-            ps.println("mensagem enviada de "+msg.getSender().getLocalName()+" para "+this.getLocalName()+" em "+formatador.format(calendar.getTime()));
-            ps.println("quit");
-        } catch (Exception e) {
-            
-        }
-
-        try {
-            Element elemento = (Element) msg.getContentObject();
-            conteudo = elemento.getName();
-        } catch (UnreadableException e) {
-            objeto = false;
-        }
-
-        if (objeto) {
-            System.out.println("\n\n===============<<MENSAGEM>>================\n"
-                    + "De: " + msg.getSender() + "\n"
-                    + "Para: " + this.getName() + "\n"
-                    + "Conteudo: Banco de Dados " + conteudo + "\n"
-                    + "===========================================");
-        } else {
-            System.out.println("\n\n===============<<MENSAGEM>>================\n"
-                    + "De: " + msg.getSender() + "\n"
-                    + "Para: " + this.getName() + "\n"
-                    + "Conteudo: " + msg.getContent() + "\n"
-                    + "===========================================");
-        }
-
-    }//fim do método exibirMenssagem
-
-    /**
-     * Método carregarBD
-     * 
-     * @param nomeAgente
-     * @return agenteBD
-     */
-    public Element carregarBD(String nomeAgente) {
-
-        File file = null;
-        SAXBuilder builder = null;
-        Document doc = null;
-        Element agenteBD = null;
-
-        file = new File("src/xml/" + nomeAgente + ".xml");
-        builder = new SAXBuilder();
-
-        try {
-            doc = builder.build(file);
-        } catch (JDOMException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }//fim do try
-
-        agenteBD = doc.getRootElement();
-        return agenteBD;
-
-    }//fim do método carregarBD
-    
-    
-    /**
      * Método atualizarBancoDeDados
      * 
      * @param msg 
      */
-    public void atualizarBancoDeDados(ACLMessage msg){
-        
-        agenteAlimentadorBD = carregarBD(this.getLocalName());
-        
+    public void atualizarBancoDeDados(ACLMessage msg) {
+
         String[] dados = msg.getContent().split(",");
-        
+
         List<String> valor = new ArrayList<String>();
-        
+
         List agentesAE = agenteAlimentadorBD.getChild("agentesAE").getChildren();
-        
+
         //Este laço for() percorre os agentes de equipamento para carregar as informações
         //de corrente para o horário especificado pelo usuário
         for (int i = 0; i < agentesAE.size(); i++) {
-            
+
             Element agenteAE1 = (Element) agentesAE.get(i);
-            
-            Element agenteAE2 = carregarBD(agenteAE1.getName());
-            
+
+            Element agenteAE2 = funcionalidades.carregarBD(agenteAE1.getName());
+
             List carregamento = agenteAE2.getChild("carregamento").getChildren();
-            
+
             //Este laço for() percorre os horários das amostras presentes no banco
             //de dados dos agentes de equipamento
             for (int j = 0; j < carregamento.size(); j++) {
-                
+
                 Element amostra = (Element) carregamento.get(j);
-                
+
                 if (amostra.getAttributeValue("horario").equalsIgnoreCase(dados[1])) {
-                    
-                    valor.add(agenteAE2.getName()+","+amostra.getValue());
+
+                    valor.add(agenteAE2.getName() + "," + amostra.getValue());
                     break;
                 }//fim do if() que encontra a amostra do horario especificado
-                
+
             }//fim do for() que percorre os valores de corrente armazenada
-            
-            
+
+
         }//fim do for() que percorre os agentes de equipamento
-        
+
         //===============<<Seta o campo correnteDisponivel>>====================
         //Este trecho de código calcula, no horário especificado pelo usuário,
         //quanto de corrente o agente de alimentador pode fornecer caso seja
         //solicitado por ajuda por outro agente de alimentador
         int valoresChave1 = Integer.parseInt(valor.get(0).split(",")[1]);
         int correnteAtual = valoresChave1;
-        int correnteMaxima = Integer.parseInt(agenteAlimentadorBD.getChild("correnteMaxima").getAttributeValue("valor"));
-        
-        agenteAlimentadorBD.getChild("correnteDisponivel").setAttribute("valor", String.valueOf(correnteMaxima-correnteAtual));
+
+        if (agenteAlimentadorBD.getChild("correnteDisponivel").getAttributeValue("valor").equalsIgnoreCase("null")) {
+            int correnteMaxima = Integer.parseInt(agenteAlimentadorBD.getChild("correnteMaxima").getAttributeValue("valor"));
+            agenteAlimentadorBD.getChild("correnteDisponivel").setAttribute("valor", String.valueOf(correnteMaxima - correnteAtual));
+        }
+
         //======================================================================
-        
-        
+
+
         List agentesAT = agenteAlimentadorBD.getChild("agentesAT").getChildren();
         int corrente1 = 0;
         int corrente2 = 0;
-        
+
         //Este laço for() percorre os agentes de trecho para setar seu carregamento
         for (int i = 0; i < agentesAT.size(); i++) {
-            
+
             Element agenteAT = (Element) agentesAT.get(i);
             String chave1 = agenteAT.getAttributeValue("chave1");
             String chave2 = agenteAT.getAttributeValue("chave2");
-            
+
             //Este laço for() encontra os valores de corrente para as chaves
             //presentes nas extremidades do trecho em questão
             for (int j = 0; j < valor.size(); j++) {
-                
+
                 if (valor.get(j).contains(chave1)) {
                     String[] valores1 = valor.get(j).split(",");
                     corrente1 = Integer.parseInt(valores1[1]);
                 }//fim do if()
-                
+
                 if (valor.get(j).contains(chave2)) {
                     String[] valores2 = valor.get(j).split(",");
                     corrente2 = Integer.parseInt(valores2[1]);
                 }//fim do if()
             }//fim do for() que encontra os valores de corrente das chaves que delimitam o agente de trecho
-            
-            agenteAT.setAttribute("carregamento", String.valueOf(corrente1-corrente2));
-            
+
+            agenteAT.setAttribute("carregamento", String.valueOf(corrente1 - corrente2));
+
         }//fim do for que percorre os agentes de trecho
-        
+
     }// fim do método atualizarBancoDeDados
-    
+
+    public void calculaAberturaDeChaves(Agent agente, Element agenteBancoDeDados) {
+
+        agenteAlimentadorBDAux = agenteBancoDeDados;
+
+        List agentesAE = agenteAlimentadorBDAux.getChild("agentesAE").getChildren();
+        List agentesAT = agenteAlimentadorBDAux.getChild("agentesAT").getChildren();
+        Element agenteATSobFalta = null;
+
+        for (int i = 0; i < agentesAT.size(); i++) {
+
+            agenteATSobFalta = (Element) agentesAT.get(i);
+
+            if (agenteATSobFalta.getAttributeValue("estado").equalsIgnoreCase("defeituoso")) {
+                break;
+            }
+        }
+
+
+        int agenteATSobFaltaCodigo = Integer.parseInt(agenteATSobFalta.getAttributeValue("codigo"));
+        for (int i = 0; i < agentesAT.size(); i++) {
+
+            Element agenteAT = (Element) agentesAT.get(i);
+            int codigoAT = Integer.parseInt(agenteAT.getAttributeValue("codigo"));
+            if (agenteATSobFaltaCodigo < codigoAT) {
+                agenteAT.setAttribute("afetado", "sim");
+            } else if (agenteATSobFaltaCodigo > codigoAT) {
+                agenteAT.setAttribute("afetado", "não");
+            }
+        }
+
+        //mensagem para abrir equipamentos chave
+        ACLMessage msg3 = new ACLMessage(ACLMessage.REQUEST);
+        msg3.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
+        msg3.setContent("Abrir");
+
+        //mensagem para fechar equipamentos chave
+        ACLMessage msg4 = new ACLMessage(ACLMessage.REQUEST);
+        msg4.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
+        msg4.setContent("Fechar");
+
+        String chaveQueAtuou = agenteAlimentadorBDAux.getChild("agentesAT").getChild(agenteATSobFalta.getName()).getAttributeValue("chave1");
+        String codigo = agenteAlimentadorBDAux.getChild("agentesAE").getChild(chaveQueAtuou).getAttributeValue("codigo");
+        int numcodigo = Integer.parseInt(codigo);
+        cont2 = 0;
+
+        for (int i = 0; i < agentesAE.size(); i++) {
+
+            Element element = (Element) agentesAE.get(i);
+            int numcodigo2 = Integer.parseInt(element.getAttributeValue("codigo"));
+            if (numcodigo2 >= numcodigo || element.getAttributeValue("tipo").equalsIgnoreCase("encontro")) {
+                cont2++;
+                String destino = element.getName();
+                msg3.addReceiver(new AID(destino, AID.ISLOCALNAME));
+            } else {
+                String destino = element.getName();
+                msg4.addReceiver(new AID(destino, AID.ISLOCALNAME));
+            }
+        }
+
+        /***************************************************************
+         * 
+         * Comportamento FIPA-Request Iniciante para fechar chaves
+         * 
+         **************************************************************/
+        addBehaviour(new AchieveREInitiator(agente, msg4) {
+
+            protected void handleInform(ACLMessage inform) {
+
+                funcionalidades.exibirMensagem(inform);
+                agenteAlimentadorBDAux.getChild("agentesAE").getChild(inform.getSender().getLocalName()).setAttribute("estado", "fechado");
+            }
+        });//fim do protocolo FIPA-Request Iniciante para fechar chaves
+
+        /***************************************************************
+         * 
+         * Comportamento FIPA-Request Iniciante para abrir chaves
+         * 
+         **************************************************************/
+        addBehaviour(new AchieveREInitiator(agente, msg3) {
+
+            protected void handleInform(ACLMessage inform) {
+
+                funcionalidades.exibirMensagem(inform);
+                agenteAlimentadorBDAux.getChild("agentesAE").getChild(inform.getSender().getLocalName()).setAttribute("estado", "aberto");
+            }
+        });//fim do protocolo FIPA-Request Iniciante para abrir chaves
+    }
 }//fim da Classe AgenteDeAlimnetador
+

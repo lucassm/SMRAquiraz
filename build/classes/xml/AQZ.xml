@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<agenteAA nome="AQZ">
+	
+	<agentesAS>
+		<JAB/>
+		<MSJ/>
+		<AGF/>
+	</agentesAS>
+	
+	<agentesAA>
+		<AQZ1 codigo="1"/>
+		<AQZ2 codigo="2"/>
+		<AQZ3 codigo="3"/>
+		<AQZ4 codigo="4"/>
+	</agentesAA>
+	
+	<agentesAT>
+		<AT11/>
+		<AT12/>
+		<AT21/>
+		<AT22/>
+		<AT31/>
+		<AT32/>
+		<AT33/>
+		<AT41/>
+		<AT42/>
+		<AT43/>
+	</agentesAT>
+	
+	<agentesAE>
+		<CH11/>
+		<CH12/>
+		<CH13/>
+		<CH14/>
+                <CH21/>
+		<CH22/>
+		<CH23/>
+		<CH24/>
+                <CH31/>
+		<CH32/>
+		<CH33/>
+		<CH34/>
+                <CH41/>
+		<CH42/>
+		<CH43/>
+		<CH44/>
+	</agentesAE>
+	
+</agenteAA>

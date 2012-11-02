@@ -5,6 +5,7 @@ import java.awt.BorderLayout;
 import java.text.DecimalFormat;
 import java.util.Iterator;
 import javax.swing.JLabel;
+import model.CalculaCurvaDeCoordenacaoESeletividade;
 import model.Grafico;
 
 public class DialogFuncao51 extends javax.swing.JFrame {
@@ -15,6 +16,7 @@ public class DialogFuncao51 extends javax.swing.JFrame {
         
         initComponents();
         
+        //CalculaCurvaDeCoordenacaoESeletividade = new CalculaCurvaDeCoordenacaoESeletividade();
         grafico = new Grafico(new Double[]{1.5}, new Double[]{1.5});
         jPanel3.setLayout(new BorderLayout());
         jPanel3.add(grafico.createPanel(), BorderLayout.CENTER);
@@ -267,6 +269,7 @@ public class DialogFuncao51 extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
 
+        
         double FS = Double.parseDouble(jTextFS.getText());
         double ICargaMax = Double.parseDouble(jTextIcarga.getText());
         double RTC = Double.parseDouble(jTextRTC.getText());

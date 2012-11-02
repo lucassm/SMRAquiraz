@@ -13,13 +13,13 @@ import org.netbeans.api.visual.widget.ImageWidget;
  */
 public class Trecho {
     
-    public ImageWidget widget;
+    public SvgWidget widget;
     public int customersNumber;
     public float power;
     
     public Trecho(String name, Graficos grafico, String way, Point position){
         
-        widget = grafico.createImageWidget(way, "<html><b>"+name+"</b></html>", position);
+        widget = grafico.createSvgWidget(way, "<html><b>"+name+"</b></html>", position);
         //graph.createHoverAction(widget);
     }
     
